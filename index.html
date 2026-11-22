@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Clear Round: Showjumping Fun Test</title>
+<style>
+  :root { --ink:#f8fafc; --muted:#cbd5e1; --panel:rgba(15,23,42,.88); --accent:#22c55e; --warn:#f59e0b; --bad:#ef4444; --line:rgba(255,255,255,.18); }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; height:100%; overflow:hidden; background:#0f172a; color:var(--ink);
+    font:15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; touch-action:none; user-select:none; -webkit-user-select:none; }
+  canvas#c { position:fixed; inset:0; width:100vw; height:100vh; display:block; }
+  #touch { position:fixed; inset:0; z-index:2; }
+  .hud { position:fixed; z-index:3; pointer-events:none; text-shadow:0 1px 3px rgba(0,0,0,.6); }
+  #hudTop { top:8px; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-start; padding:0 10px; }
+  .chip { background:rgba(15,23,42,.62); border-radius:10px; padding:6px 10px; font-weight:600; }
+  .chip small { display:block; font-weight:400; color:var(--muted); font-size:12px; }
+  #hudLeft, #hudRight { display:flex; gap:8px; align-items:flex-start; }
+  .btn-hud { pointer-events:auto; background:rgba(15,23,42,.7); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font:inherit; font-weight:600; }
+  #confBar { width:80px; height:6px; background:rgba(255,255,255,.2); border-radius:3px; margin-top:4px; overflow:hidden; }
+  #confFill { height:100%; width:100%; background:var(--accent); }
+  #lead.wrong { color:var(--bad); }
+  #toast { top:64px; left:50%; transform:translateX(-50%); font-size:18px; font-weight:700; padding:8px 16px; border-radius:12px; background:rgba(15,23,42,.72); opacity:0; transition:opacity .2s; white-space:nowrap; }
+  #toast.show { opacity:1; }
+  #toast.good { color:#86efac; } #toast.warn { color:#fcd34d; } #toast.bad { color:#fca5a5; } #toast.info { color:#e2e8f0; }
+  #gauges { bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:10px; align-items:flex-end; }
+  #balance { width:132px; height:132px; }
+  #beat { width:150px; height:64px; }
+  #stick { position:fixed; z-index:4; left:22px; bottom:22px; width:136px; height:136px; border-radius:50%; background:rgba(15,23,42,.35); border:2px solid var(--line); display:none; touch-action:none; }
+  #knob { position:absolute; left:50%; top:50%; width:56px; height:56px; margin:-28px 0 0 -28px; border-radius:50%; background:rgba(248,250,252,.55); }
+  #stick .lbl { position:absolute; font-size:11px; color:var(--muted); }
+  .pace-btn { position:fixed; z-index:4; bottom:24px; width:96px; height:76px; border-radius:16px; border:2px solid var(--line); background:rgba(15,23,42,.45); color:var(--ink); font:inherit; font-weight:700; display:none; touch-action:none; }
+  .pace-btn.on { background:rgba(34,197,94,.45); }
+  #btnCollect { right:128px; } #btnExtend { right:20px; }
+  .overlay { position:fixed; inset:0; z-index:10; display:flex; justify-content:center; align-items:flex-start; overflow-y:auto; touch-action:pan-y; background:rgba(2,6,23,.55); padding:16px 12px 40px; }
+  .overlay.hidden { display:none; }
+  .panel { width:min(720px,100%); background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px 18px 22px; user-select:text; }
+  h1 { margin:0; font-size:26px; } h2 { font-size:15px; margin:18px 0 8px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+  .sub { margin:4px 0 0; color:var(--muted); }
+  .rot { display:none; margin-top:10px; padding:8px 10px; border-radius:10px; background:rgba(245,158,11,.18); color:#fde68a; }
+  @media (orientation:portrait) { .rot { display:block; } }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px; }
+  .card { text-align:left; background:rgba(255,255,255,.05); border:2px solid transparent; border-radius:12px; padding:10px; color:var(--ink); font:inherit; }
+  .card.sel { border-color:var(--accent); background:rgba(34,197,94,.12); }
+  .card b { display:block; font-size:16px; } .card span { color:var(--muted); font-size:13px; }
+  .card .best { display:block; margin-top:4px; color:#86efac; font-size:12px; }
+  .seg { display:inline-flex; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .seg button { background:transparent; color:var(--ink); border:0; padding:10px 16px; font:inherit; font-weight:600; }
+  .seg button.sel { background:var(--accent); color:#052e16; }
+  .hint { color:var(--muted); font-size:13px; margin:6px 0 0; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+  button.plain { background:rgba(255,255,255,.08); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:9px 14px; font:inherit; font-weight:600; }
+  button.primary { width:100%; margin-top:20px; padding:16px; font:inherit; font-size:18px; font-weight:800; color:#052e16; background:var(--accent); border:0; border-radius:14px; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  #realismName { font-weight:700; margin-top:4px; }
+  .assist { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--line); }
+  .assist button { min-width:96px; }
+  .assist button.you { background:rgba(245,158,11,.25); border-color:rgba(245,158,11,.6); }
+  label.tog { display:flex; gap:8px; align-items:center; margin:6px 0; }
+  #tiltPreview { width:96px; height:96px; background:rgba(255,255,255,.05); border-radius:50%; }
+  #tiltStatus { font-size:13px; color:var(--muted); }
+  details { margin-top:14px; color:var(--muted); } summary { color:var(--ink); font-weight:600; }
+  details li { margin:4px 0; }
+  table { width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
+  th, td { text-align:left; padding:6px 4px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .r-clear { color:#86efac; } .r-down { color:#fca5a5; } .r-refusal { color:#fcd34d; }
+  .big { font-size:28px; font-weight:800; margin:4px 0; }
+  .stats { display:flex; gap:16px; flex-wrap:wrap; color:var(--muted); }
+  .stats b { color:var(--ink); }
+  .tip { margin-top:12px; padding:10px 12px; border-radius:10px; background:rgba(34,197,94,.12); }
+  .two { display:flex; gap:10px; } .two button { flex:1; }
+  .sticky { position:sticky; bottom:-22px; padding:4px 0 14px; background:linear-gradient(transparent, var(--panel) 30%); }
+  .sticky button.primary { margin-top:10px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="touch"></div>
+
+<div id="hudTop" class="hud">
+  <div id="hudLeft">
+    <button id="pauseBtn" class="btn-hud">II</button>
+    <div class="chip"><span id="fenceNo">Fence 1/7</span><small id="horseName">Barney</small></div>
+  </div>
+  <div class="chip" style="text-align:center"><span id="timer">0.0 s</span><small id="faults">0 faults</small></div>
+  <div id="hudRight">
+    <div class="chip"><span id="lead">Lead: left</span><small>Confidence</small><div id="confBar"><div id="confFill"></div></div></div>
+    <button id="viewBtn" class="btn-hud">View</button>
+  </div>
+</div>
+<div id="toast" class="hud"></div>
+<div id="gauges" class="hud">
+  <canvas id="balance" width="264" height="264"></canvas>
+  <canvas id="beat" width="300" height="128"></canvas>
+</div>
+<div id="stick"><div id="knob"></div><span class="lbl" style="top:4px;left:50%;transform:translateX(-50%)">fwd</span><span class="lbl" style="bottom:4px;left:50%;transform:translateX(-50%)">back</span></div>
+<button id="btnCollect" class="pace-btn">Steady</button>
+<button id="btnExtend" class="pace-btn">Push</button>
+
+<div id="menu" class="overlay">
+  <div class="panel">
+    <h1>Clear Round</h1>
+    <p class="sub">Showjumping fun test. Tilt to balance, tap to ask. Seven fences, one clock.</p>
+    <div class="rot">Turn your phone sideways for the best view.</div>
+
+    <h2>Horse</h2>
+    <div id="horses" class="cards"></div>
+
+    <h2>Controls</h2>
+    <div class="seg" id="ctlSeg"><button data-v="tilt">Tilt</button><button data-v="pad">Thumb pad</button></div>
+    <div id="tiltBox">
+      <div class="row">
+        <button id="enableTilt" class="plain">Enable tilt</button>
+        <button id="setNeutral" class="plain">Set neutral</button>
+        <canvas id="tiltPreview" width="192" height="192"></canvas>
+      </div>
+      <div id="tiltStatus">Hold the phone the way you want to play, then tap Set neutral. Tilt right and the dot should move right; tilt the top away from you and it should move up.</div>
+      <label class="tog"><input type="checkbox" id="invLat"> Invert side to side</label>
+      <label class="tog"><input type="checkbox" id="invFore"> Invert forward and back</label>
+    </div>
+    <p class="hint" id="padHint">Thumb pad: the left stick is your body (side to side, forward and back). Tap anywhere on the right to give an aid. Arrow keys and Space also work on a computer.</p>
+
+    <h2>Pace control</h2>
+    <div class="seg" id="paceSeg"><button data-v="seat">Seat lean</button><button data-v="buttons">Buttons</button></div>
+    <p class="hint" id="paceHint"></p>
+
+    <h2>Realism</h2>
+    <input type="range" id="realism" min="0" max="5" step="1">
+    <div id="realismName"></div>
+    <div id="assistList"></div>
+
+    <h2>Aids and feedback</h2>
+    <label class="tog"><input type="checkbox" id="guides"> Stride guides on the ground</label>
+    <label class="tog"><input type="checkbox" id="sound"> Hoofbeat sound</label>
+    <label class="tog"><input type="checkbox" id="haptics"> Vibrate on the leading leg (Android)</label>
+
+    <div class="sticky">
+      <button id="resumeBtn" class="primary" style="display:none;background:#38bdf8;color:#082f49">Resume</button>
+      <button id="rideBtn" class="primary">Ride</button>
+    </div>
+
+    <details>
+      <summary>How to ride</summary>
+      <ul>
+        <li><b>Balance:</b> keep the white dot inside the green zone on the balance gauge. Lean into turns. Drift out and you wobble, lose a stirrup, hang off, then fall.</li>
+        <li><b>Take-off:</b> tap during the stride you want him to leave the ground from. He takes off at the end of that stride. The yellow strip on the ground is the ideal take-off zone; stride guides show where each stride will land.</li>
+        <li><b>Jump position:</b> lean forward as he takes off (fold), stay forward over the fence, then sit back on landing. Get left behind and you catch him in the mouth.</li>
+        <li><b>Pace:</b> with Seat lean, lean forward to lengthen the stride and back to shorten it between fences. With Buttons, hold Steady or Push.</li>
+        <li><b>Leads:</b> away from fences, a tap asks for a flying change. Time it in the moment of suspension: the gap after the third hoofbeat, shown in green on the beat gauge. In the air, lean towards your next turn to land on the right lead.</li>
+        <li><b>Rules:</b> 4 faults for a pole or a refusal, 1 fault per second (or part) over the time allowed. A second refusal or a fall is elimination.</li>
+      </ul>
+    </details>
+  </div>
+</div>
+
+<div id="results" class="overlay hidden">
+  <div class="panel">
+    <div id="resHead" class="big"></div>
+    <div id="resStats" class="stats"></div>
+    <table><thead><tr><th>Fence</th><th>Result</th><th>Spot</th><th>What happened</th></tr></thead><tbody id="resRows"></tbody></table>
+    <div id="resTip" class="tip"></div>
+    <div class="two"><button id="againBtn" class="primary">Ride again</button><button id="menuBtn" class="primary" style="background:#334155;color:#f8fafc">Settings</button></div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js';
+
+// ---------------------------------------------------------------- constants
+const G = 9.81, DEG = Math.PI / 180;
+const STRIDE_HZ = 1.65;                 // about 99 canter strides per minute
+const L_MIN = 3.1, L_WORK = 3.6, L_MAX = 4.1;  // stride lengths in metres
+const SPEED_MPM = 325;                  // time allowed is set at 325 m/min
+const TILT_DEG = 18;                    // full lean = 18 degrees of phone tilt
+const LEAN_REF = 30 * DEG;              // full lean on the gauge = 30 degrees of body lean
+const ZONE = 0.45;                      // ideal take-off zone, +/- metres
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const dz = (x, d) => Math.abs(x) < d ? 0 : (x - Math.sign(x) * d) / (1 - d);
+
+const HORSES = {
+  schoolmaster: { name: 'Barney', she: false, desc: 'Schoolmaster. Honest and forgiving; modest scope.', colour: 0x7a5230,
+    scope: 0.82, bold: 0.92, care: 0.7, resp: 0.6, spook: 0.0, forgive: 0.35, jab: 0.8 },
+  youngster: { name: 'Rocket', she: false, desc: 'Bold youngster. Big scope, keen, a bit spooky.', colour: 0x2a2a2e,
+    scope: 1.0, bold: 0.95, care: 0.5, resp: 0.95, spook: 0.035, forgive: 0.0, jab: 1.0 },
+  mare: { name: 'Willow', she: true, desc: 'Careful mare. Rarely touches a pole; hates being caught in the mouth.', colour: 0xa8643a,
+    scope: 0.92, bold: 0.62, care: 0.95, resp: 0.8, spook: 0.01, forgive: 0.1, jab: 2.0 },
+};
+
+const COURSE_PTS = [[-36,15],[-24,15],[-12,15],[0,15],[11,13.5],[19,7],[22,-3],[19,-12],[11,-16.5],[2,-17],[-7.5,-17],[-17,-17],[-25.5,-15],[-30,-8],[-30,2],[-26,9],[-18,10],[-8,4],[0,-1.5],[8,-3.5],[14.5,-0.5],[15.5,5],[10,9.5],[2,10.5],[-8,10.5],[-18,10.5],[-26,10.5]];
+const FENCE_DEFS = [
+  { at: [-12, 15],  type: 'vertical', h: 1.00 },
+  { at: [22, -3],   type: 'oxer',     h: 1.05, spread: 1.0 },
+  { at: [2, -17],   type: 'vertical', h: 1.10 },
+  { at: [-17, -17], type: 'oxer',     h: 1.10, spread: 1.1 },
+  { at: [-30, 2],   type: 'vertical', h: 1.10 },
+  { at: [-8, 4],    type: 'oxer',     h: 1.15, spread: 1.2 },
+  { at: [2, 10.5],  type: 'vertical', h: 1.20 },
+];
+const START_AT = [-27, 15], FINISH_AT = [-12, 10.5];
+
+const ORDER = ['balance', 'seat', 'takeoff', 'pace', 'leads'];
+const ASSIST_LABEL = { balance: 'Side-to-side balance', seat: 'Jump position (fold and sit back)', takeoff: 'Take-off timing', pace: 'Pace and striding', leads: 'Lead changes' };
+const LEVEL_NAMES = ['0 · Passenger: everything assisted', '1 · You balance side to side', '2 · You also ride the jump position', '3 · You also time the take-off', '4 · You also control the pace', '5 · Full sim: you also change leads'];
+
+// ---------------------------------------------------------------- settings
+function setLevel(s, l) { s.realism = l; s.assists = {}; ORDER.forEach((k, i) => s.assists[k] = i >= l); }
+function loadSettings() {
+  const d = { control: 'tilt', pace: 'seat', realism: 2, assists: null, guides: true, sound: true, haptics: true, invLat: false, invFore: false, view: 'chase', horse: 'schoolmaster' };
+  try { const s = JSON.parse(localStorage.getItem('cr-settings') || 'null'); if (s) Object.assign(d, s); } catch (e) {}
+  if (!d.assists || ORDER.some(k => typeof d.assists[k] !== 'boolean')) setLevel(d, d.realism);
+  if (!HORSES[d.horse]) d.horse = 'schoolmaster';
+  return d;
+}
+const settings = loadSettings();
+function saveSettings() { try { localStorage.setItem('cr-settings', JSON.stringify(settings)); } catch (e) {} }
+
+// ---------------------------------------------------------------- track
+function buildTrack(pts) {
+  const curve = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(p[0], 0, p[1])), false, 'centripetal');
+  const length = curve.getLength(), N = Math.ceil(length / 0.25), step = length / N;
+  const P = [], T = [], K = new Float32Array(N + 1);
+  for (let i = 0; i <= N; i++) { P.push(curve.getPointAt(i / N)); T.push(curve.getTangentAt(i / N)); }
+  for (let i = 0; i <= N; i++) {
+    const i0 = Math.max(0, i - 4), i1 = Math.min(N, i + 4), a = T[i0], b = T[i1];
+    K[i] = ((b.x - a.x) * b.z + (b.z - a.z) * -b.x) / ((i1 - i0) * step);   // >0 = left turn
+  }
+  return { length, N, step, P, T, K };
+}
+const track = buildTrack(COURSE_PTS);
+const tIdx = s => clamp(Math.round(s / track.step), 0, track.N);
+function trackAt(s, o) {
+  const f = clamp(s / track.step, 0, track.N - 1e-6), i = Math.floor(f), r = f - i;
+  o.p.lerpVectors(track.P[i], track.P[i + 1], r);
+  o.t.lerpVectors(track.T[i], track.T[i + 1], r).normalize();
+  o.k = track.K[i] * (1 - r) + track.K[i + 1] * r;
+  return o;
+}
+const mkTA = () => ({ p: new THREE.Vector3(), t: new THREE.Vector3(), k: 0 });
+function nearestS(x, z) { let best = 0, bd = 1e9; track.P.forEach((p, i) => { const d = (p.x - x) ** 2 + (p.z - z) ** 2; if (d < bd) { bd = d; best = i; } }); return best * track.step; }
+
+const fences = FENCE_DEFS.map((d, i) => {
+  const s = nearestS(d.at[0], d.at[1]), spread = d.spread || 0;
+  return { n: i + 1, ...d, spread, s, front: s - spread / 2, back: s + spread / 2, ideal: d.type === 'oxer' ? 1.8 : 2.0, done: false, topRails: [] };
+});
+const startS = nearestS(...START_AT), finishS = nearestS(...FINISH_AT);
+const timeAllowed = Math.ceil((finishS - startS) / (SPEED_MPM / 60));
+
+// ---------------------------------------------------------------- scene
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9cc9ea);
+scene.fog = new THREE.Fog(0x9cc9ea, 70, 190);
+const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 500);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x4d6b35, 1.7));
+const sun = new THREE.DirectionalLight(0xfff4e0, 1.5); sun.position.set(30, 60, 25); scene.add(sun);
+function resize() { const w = window.innerWidth, h = window.innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < h ? 80 : 62; camera.updateProjectionMatrix(); }
+window.addEventListener('resize', resize); resize();
+
+const lam = c => new THREE.MeshLambertMaterial({ color: c });
+{
+  const grass = new THREE.Mesh(new THREE.PlaneGeometry(500, 500), lam(0x5f8f3e)); grass.rotation.x = -Math.PI / 2; scene.add(grass);
+  const sand = new THREE.Mesh(new THREE.PlaneGeometry(76, 51), lam(0xd8c39a)); sand.rotation.x = -Math.PI / 2; sand.position.y = 0.01; scene.add(sand);
+  const white = lam(0xf8fafc);
+  const side = (x1, z1, x2, z2) => {
+    const len = Math.hypot(x2 - x1, z2 - z1), g = new THREE.Group();
+    for (const y of [0.55, 1.05]) { const r = new THREE.Mesh(new THREE.BoxGeometry(len, 0.08, 0.06), white); r.position.y = y; g.add(r); }
+    for (let d = 0; d <= len + 0.01; d += 4) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.15, 0.12), white); p.position.set(d - len / 2, 0.575, 0); g.add(p); }
+    g.position.set((x1 + x2) / 2, 0, (z1 + z2) / 2); g.rotation.y = -Math.atan2(z2 - z1, x2 - x1); scene.add(g);
+  };
+  side(-38, -25.5, 38, -25.5); side(38, -25.5, 38, 25.5); side(38, 25.5, -38, 25.5); side(-38, 25.5, -38, -25.5);
+  // trees and a stable block for depth
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const trunk = lam(0x6b4f2a), leaf = lam(0x2f5d2a), leaf2 = lam(0x3d7a33);
+  for (let i = 0; i < 70; i++) {
+    const a = rnd() * Math.PI * 2, r = 52 + rnd() * 60, x = Math.cos(a) * r * 1.2, z = Math.sin(a) * r;
+    const t = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 3, 6), trunk); t.position.set(x, 1.5, z); scene.add(t);
+    const h = 5 + rnd() * 4, c = new THREE.Mesh(new THREE.ConeGeometry(2 + rnd() * 1.5, h, 7), rnd() > 0.5 ? leaf : leaf2); c.position.set(x, 3 + h / 2 - 0.5, z); scene.add(c);
+  }
+  const barn = new THREE.Mesh(new THREE.BoxGeometry(30, 5, 9), lam(0x8b3a2b)); barn.position.set(0, 2.5, -38); scene.add(barn);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(31, 0.4, 10.5), lam(0x374151)); roof.position.set(0, 5.2, -38); scene.add(roof);
+}
+
+function canvasTex(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; }
+const POLE_COLOURS = [['#d62828', '#ffffff'], ['#1d4ed8', '#ffffff'], ['#15803d', '#ffffff'], ['#f59e0b', '#1f2937'], ['#7c3aed', '#ffffff'], ['#d62828', '#1f2937'], ['#0f766e', '#ffffff']];
+const FENCE_W = 3.6;
+const zoneMat = new THREE.MeshBasicMaterial({ color: 0xfacc15, transparent: true, opacity: 0.38, depthWrite: false });
+
+function board(w, h, tex) { const g = new THREE.Group(), m = new THREE.MeshBasicMaterial({ map: tex }); const a = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m), b = a.clone(); b.rotation.y = Math.PI; b.position.z = -0.01; g.add(a, b); return g; }
+function placeOnTrack(obj, s, lateral = 0) { const ta = trackAt(s, mkTA()); obj.position.copy(ta.p); obj.rotation.y = Math.atan2(ta.t.x, ta.t.z); if (lateral) obj.translateX(lateral); }
+
+fences.forEach(f => {
+  const g = new THREE.Group();
+  const [c1, c2] = POLE_COLOURS[(f.n - 1) % POLE_COLOURS.length];
+  const tex = canvasTex(8, 128, (x, w, h) => { for (let i = 0; i < 8; i++) { x.fillStyle = i % 2 ? c1 : c2; x.fillRect(0, i * 16, w, 16); } });
+  const poleMat = new THREE.MeshLambertMaterial({ map: tex });
+  const wingMat = lam(0xf1f5f9), capMat = lam(new THREE.Color(c1).getHex());
+  const poleGeo = new THREE.CylinderGeometry(0.05, 0.05, FENCE_W - 0.25, 10); poleGeo.rotateZ(Math.PI / 2);
+  const frames = f.type === 'oxer' ? [-f.spread / 2, f.spread / 2] : [0];
+  frames.forEach(zf => {
+    for (const sx of [-1, 1]) {
+      const wh = f.h + 0.5, w = new THREE.Mesh(new THREE.BoxGeometry(0.14, wh, 0.55), wingMat); w.position.set(sx * FENCE_W / 2, wh / 2, zf); g.add(w);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.12, 0.57), capMat); cap.position.set(sx * FENCE_W / 2, wh, zf); g.add(cap);
+    }
+    const rails = f.type === 'oxer' ? [f.h, f.h * 0.55] : [f.h, f.h * 0.66, f.h * 0.33];
+    rails.forEach((y, ri) => {
+      const p = new THREE.Mesh(poleGeo, poleMat); p.position.set(0, y, zf); g.add(p);
+      if (ri === 0) f.topRails.push({ mesh: p, base: p.position.clone(), falling: false, vy: 0, vz: 0, spin: 0 });
+    });
+  });
+  if (f.type === 'vertical') { const gp = new THREE.Mesh(poleGeo, poleMat); gp.position.set(0, 0.08, -0.3); g.add(gp); }
+  const nb = board(0.5, 0.5, canvasTex(64, 64, (x, w, h) => { x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.fillStyle = '#111'; x.font = 'bold 44px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(f.n), 32, 34); }));
+  nb.position.set(-(FENCE_W / 2 + 0.45), f.h + 0.35, frames[0] - 0.2); nb.rotation.y = Math.PI; g.add(nb);
+  const zone = new THREE.Mesh(new THREE.PlaneGeometry(FENCE_W - 0.6, ZONE * 2), zoneMat); zone.rotation.x = -Math.PI / 2; zone.position.set(0, 0.03, -f.spread / 2 - f.ideal); g.add(zone);
+  f.zone = zone;
+  placeOnTrack(g, f.s); scene.add(g); f.group = g;
+});
+// start and finish flags (red on the right, white on the left)
+for (const [s, label] of [[startS, 'START'], [finishS, 'FINISH']]) {
+  for (const [lat, col] of [[-2.6, 0xdc2626], [2.6, 0xf8fafc]]) {
+    const g = new THREE.Group();
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.8, 6), lam(0x334155)); pole.position.y = 0.9; g.add(pole);
+    const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.35), new THREE.MeshLambertMaterial({ color: col, side: THREE.DoubleSide })); flag.position.set(0, 1.6, 0.25); flag.rotation.y = Math.PI / 2; g.add(flag);
+    placeOnTrack(g, s, lat); scene.add(g);
+  }
+  const sign = board(1.6, 0.4, canvasTex(256, 64, (x, w, h) => { x.fillStyle = '#0f172a'; x.fillRect(0, 0, w, h); x.fillStyle = '#fff'; x.font = 'bold 40px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(label, w / 2, h / 2 + 2); }));
+  const bg = new THREE.Group(); sign.position.set(0, 2.1, 0); sign.rotation.y = Math.PI; bg.add(sign); placeOnTrack(bg, s, -2.6); scene.add(bg);
+}
+// stride guide rings
+const ringGeo = new THREE.RingGeometry(0.16, 0.28, 20); ringGeo.rotateX(-Math.PI / 2);
+const guideRings = [];
+for (let i = 0; i < 6; i++) { const m = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85, depthWrite: false })); m.visible = false; scene.add(m); guideRings.push(m); }
+
+// ---------------------------------------------------------------- horse and rider models
+function makeHorse(colour, ghost) {
+  const m = ghost ? new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.3, depthWrite: false }) : lam(colour);
+  const dark = ghost ? m : lam(0x1c1917);
+  const root = new THREE.Group(), body = new THREE.Group(); body.position.y = 1.25; root.add(body);
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.36, 1.05, 6, 12), m); torso.rotation.x = Math.PI / 2; body.add(torso);
+  const neckPivot = new THREE.Group(); neckPivot.position.set(0, 0.15, 0.62); body.add(neckPivot);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.27, 0.95, 10), m); neck.position.set(0, 0.36, 0.2); neck.rotation.x = 0.72; neckPivot.add(neck);
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.25, 0.6), m); head.position.set(0, 0.7, 0.58); head.rotation.x = 0.6; neckPivot.add(head);
+  for (const sx of [-1, 1]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.14, 5), m); ear.position.set(sx * 0.07, 0.9, 0.44); neckPivot.add(ear); }
+  if (!ghost) { const mane = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 0.9), dark); mane.position.set(0, 0.6, 0.12); mane.rotation.x = -0.85; neckPivot.add(mane); }
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.8, 6), dark); tail.position.set(0, -0.15, -0.95); tail.rotation.x = -2.6; body.add(tail);
+  if (!ghost) {
+    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.55), lam(0x3b2414)); saddle.position.set(0, 0.36, -0.02); body.add(saddle);
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.02, 0.6), lam(0x1e3a8a)); pad.position.set(0, 0.32, -0.02); body.add(pad);
+  }
+  const legs = {};
+  const defs = { LF: [0.19, 0.55, true], RF: [-0.19, 0.55, true], LH: [0.19, -0.58, false], RH: [-0.19, -0.58, false] };
+  for (const [k, [x, z, fore]] of Object.entries(defs)) {
+    const hip = new THREE.Group(); hip.position.set(x, -0.12, z); body.add(hip);
+    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.07, 0.6, 8), m); upper.position.y = -0.3; hip.add(upper);
+    const knee = new THREE.Group(); knee.position.y = -0.58; hip.add(knee);
+    const lower = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.05, 0.48, 8), m); lower.position.y = -0.24; knee.add(lower);
+    const hoof = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.075, 0.08, 8), dark); hoof.position.y = -0.5; knee.add(hoof);
+    legs[k] = { hip, knee, fore };
+  }
+  const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.9, 20), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: ghost ? 0.08 : 0.22, depthWrite: false }));
+  shadow.rotation.x = -Math.PI / 2; shadow.scale.set(0.6, 1.4, 1); shadow.position.y = 0.025; root.add(shadow);
+  return { root, body, neckPivot, legs, shadow };
+}
+function makeRider() {
+  const jacket = lam(0x1e3a5f), breeches = lam(0xf5f5f4), boots = lam(0x111111), skin = lam(0xe0b18f), helmet = lam(0x0f172a);
+  const root = new THREE.Group(); root.position.set(0, 0.42, -0.06);
+  const hips = new THREE.Group(); root.add(hips);
+  for (const sx of [-1, 1]) {
+    const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.13, 0.45), breeches); thigh.position.set(sx * 0.24, -0.05, 0.12); thigh.rotation.x = 0.5; hips.add(thigh);
+    const shin = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.46, 0.12), boots); shin.position.set(sx * 0.32, -0.36, 0.2); hips.add(shin);
+  }
+  const torsoPivot = new THREE.Group(); hips.add(torsoPivot);
+  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.55, 0.22), jacket); torso.position.y = 0.32; torsoPivot.add(torso);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), skin); head.position.y = 0.72; torsoPivot.add(head);
+  const hat = new THREE.Mesh(new THREE.SphereGeometry(0.125, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), helmet); hat.position.y = 0.74; torsoPivot.add(hat);
+  for (const sx of [-1, 1]) { const arm = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.09, 0.5), jacket); arm.position.set(sx * 0.2, 0.42, 0.2); arm.rotation.x = 0.7; torsoPivot.add(arm); }
+  return { root, hips, torsoPivot, head };
+}
+
+let horseDef = HORSES[settings.horse];
+let horse = makeHorse(horseDef.colour, false);
+const rider = makeRider();
+horse.body.add(rider.root); scene.add(horse.root);
+const ghost = makeHorse(0xffffff, true); ghost.root.visible = false; scene.add(ghost.root);
+function swapHorse() {
+  scene.remove(horse.root); horseDef = HORSES[settings.horse];
+  horse = makeHorse(horseDef.colour, false); scene.add(horse.root); reattachRider();
+}
+function reattachRider() { horse.body.add(rider.root); rider.root.position.set(0, 0.42, -0.06); rider.root.rotation.set(0, 0, 0); }
+
+// ---------------------------------------------------------------- audio and haptics
+let actx = null, noiseBuf = null;
+function initAudio() {
+  if (actx) { actx.resume().catch(() => {}); return; }
+  try {
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    noiseBuf = actx.createBuffer(1, actx.sampleRate * 0.1, actx.sampleRate);
+    const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    actx.resume().catch(() => {});
+  } catch (e) { actx = null; }
+}
+function hoof(accent) {
+  if (!actx || !settings.sound) return;
+  const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+  o.frequency.setValueAtTime(accent ? 125 : 95, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.09);
+  g.gain.setValueAtTime(accent ? 0.55 : 0.3, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+  o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.13);
+  const n = actx.createBufferSource(), f = actx.createBiquadFilter(), g2 = actx.createGain();
+  n.buffer = noiseBuf; f.type = 'lowpass'; f.frequency.value = 1100; g2.gain.setValueAtTime(0.22, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+  n.connect(f).connect(g2).connect(actx.destination); n.start(t); n.stop(t + 0.06);
+}
+function thud(big) { if (!actx || !settings.sound) return; const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(big ? 220 : 70, t); o.frequency.exponentialRampToValueAtTime(big ? 80 : 35, t + 0.25); g.gain.setValueAtTime(0.5, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3); o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.32); }
+function buzz(ms) { if (!settings.haptics) return; try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} }
+
+// ---------------------------------------------------------------- input
+const ctl = () => (settings.control === 'tilt' && !tilt.have ? 'pad' : settings.control);
+const tilt = { have: false, asked: false, blocked: false, raw: { lat: 0, pitch: 0 }, zero: { lat: 0, pitch: 0 }, lat: 0, fore: 0 };
+function onOrient(e) {
+  if (e.beta == null || e.gamma == null) return;
+  if (!tilt.have) { tilt.have = true; tilt.blocked = false; }
+  const b = e.beta * DEG, g = e.gamma * DEG;
+  const ux = -Math.cos(b) * Math.sin(g), uy = Math.sin(b), uz = Math.cos(b) * Math.cos(g);   // "up" in device axes
+  const ang = ((screen.orientation && screen.orientation.angle) || window.orientation || 0) * DEG;
+  const xs = ux * Math.cos(ang) - uy * Math.sin(ang), ys = ux * Math.sin(ang) + uy * Math.cos(ang); // into screen axes
+  const lat = -Math.atan2(xs, Math.hypot(ys, uz)), pitch = Math.atan2(ys, uz);
+  tilt.raw.lat += (lat - tilt.raw.lat) * 0.6;
+  let dp = pitch - tilt.raw.pitch; if (dp > Math.PI) dp -= 2 * Math.PI; if (dp < -Math.PI) dp += 2 * Math.PI;
+  tilt.raw.pitch += dp * 0.6;
+  let p = tilt.raw.pitch - tilt.zero.pitch; if (p > Math.PI) p -= 2 * Math.PI; if (p < -Math.PI) p += 2 * Math.PI;
+  tilt.lat = clamp((tilt.raw.lat - tilt.zero.lat) / (TILT_DEG * DEG), -1.3, 1.3) * (settings.invLat ? -1 : 1);
+  tilt.fore = clamp(-p / (TILT_DEG * DEG), -1.3, 1.3) * (settings.invFore ? -1 : 1);
+}
+const BLOCKED_MSG = 'Tilt is not available here: this page is getting no motion sensor data. The Claude app viewer blocks motion sensors, so open the HTML file from an HTTPS address in Chrome or Safari to use tilt. Until then, rides here use the thumb pad.';
+async function enableTilt() {
+  const status = document.getElementById('tiltStatus');
+  initAudio();
+  try {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const r = await DeviceOrientationEvent.requestPermission();
+      if (r !== 'granted') throw new Error('denied');
+    }
+  } catch (e) { tilt.blocked = true; status.textContent = BLOCKED_MSG; renderMenu(); return; }
+  if (!tilt.asked) { window.addEventListener('deviceorientation', onOrient); tilt.asked = true; }
+  status.textContent = 'Waiting for the motion sensor…';
+  await new Promise(r => setTimeout(r, 1500));
+  if (tilt.have) { setNeutral(); status.textContent = 'Tilt is on. Hold the phone how you will play and tap Set neutral. Check the dot moves the right way.'; }
+  else { tilt.blocked = true; status.textContent = BLOCKED_MSG; renderMenu(); }
+}
+function setNeutral() { tilt.zero.lat = tilt.raw.lat; tilt.zero.pitch = tilt.raw.pitch; }
+
+const stick = { x: 0, y: 0, id: null };
+const stickEl = document.getElementById('stick'), knob = document.getElementById('knob');
+function stickMove(e) {
+  const r = stickEl.getBoundingClientRect(), R = r.width / 2;
+  let x = (e.clientX - r.left - R) / R, y = -(e.clientY - r.top - R) / R; const m = Math.hypot(x, y); if (m > 1) { x /= m; y /= m; }
+  stick.x = x; stick.y = y; knob.style.transform = `translate(${x * R * 0.7}px, ${-y * R * 0.7}px)`;
+}
+stickEl.addEventListener('pointerdown', e => { e.stopPropagation(); stick.id = e.pointerId; stickEl.setPointerCapture(e.pointerId); stickMove(e); });
+stickEl.addEventListener('pointermove', e => { if (e.pointerId === stick.id) stickMove(e); });
+const stickUp = e => { if (e.pointerId !== stick.id) return; stick.id = null; stick.x = 0; stick.y = 0; knob.style.transform = ''; };
+stickEl.addEventListener('pointerup', stickUp); stickEl.addEventListener('pointercancel', stickUp);
+
+const paceBtn = { collect: false, extend: false };
+for (const [id, key] of [['btnCollect', 'collect'], ['btnExtend', 'extend']]) {
+  const el = document.getElementById(id);
+  el.addEventListener('pointerdown', e => { e.stopPropagation(); paceBtn[key] = true; el.classList.add('on'); el.setPointerCapture(e.pointerId); });
+  const up = () => { paceBtn[key] = false; el.classList.remove('on'); };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+}
+document.getElementById('touch').addEventListener('pointerdown', e => {
+  if (ctl() === 'pad' && e.clientX < window.innerWidth * 0.35) return;
+  onTap();
+});
+const keys = {}; const kb = { lat: 0, fore: 0 };
+window.addEventListener('keydown', e => {
+  if (e.repeat) return;
+  keys[e.code] = true;
+  if (e.code === 'Space') { e.preventDefault(); onTap(); }
+  if (e.code === 'Escape' && running) pauseGame();
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// ---------------------------------------------------------------- run state
+let running = false, paused = true;
+const st = {};
+let ghostData = null;
+function bestKey() { return 'cr-best-' + settings.horse; }
+function loadBest() { try { return JSON.parse(localStorage.getItem(bestKey()) || 'null'); } catch (e) { return null; } }
+function saveBest(b) { try { localStorage.setItem(bestKey(), JSON.stringify(b)); } catch (e) {} }
+
+function resetRun() {
+  Object.assign(st, {
+    mode: 'ride', s: 0, L: L_WORK, Ltarget: L_WORK, chipLen: 0, phase: 0.5, lead: 'L', disunited: 0,
+    conf: 1, faults: 0, refusals: 0, time: 0, timing: false, finished: false, endT: 0,
+    req: false, leadReq: null, jump: null, landT: 0, refuse: null,
+    cause: null, lat: 0, fore: 0, latAct: 0, foreAct: 0, latDem: 0, foreDem: 0.15, tolL: 0.22, tolF: 0.65, foreFree: false, S: 0, stage: 0,
+    wob: { t: 0, p1: Math.random() * 6, p2: Math.random() * 6, burst: 0 }, spook: null,
+    log: [], fall: null, elim: null, rec: [], recT: 0, flags: {}, v: L_WORK * STRIDE_HZ, kLook: 0,
+  });
+  fences.forEach(f => { f.done = false; f.topRails.forEach(r => { r.mesh.position.copy(r.base); r.mesh.rotation.set(0, 0, 0); r.falling = false; r.vy = 0; r.vz = 0; }); });
+  reattachRider();
+  const best = loadBest(); ghostData = best && best.rec ? best.rec : null; ghost.root.visible = false;
+}
+
+function nextFence() { return fences.find(f => !f.done && f.back > st.s - 0.1) || null; }
+function leadNeedAt(s) { const k = track.K[tIdx(s)]; if (Math.abs(k) < 1 / 22) return null; return k > 0 ? 'L' : 'R'; }
+function leadWrong() { const n = leadNeedAt(st.s); return !!n && n !== st.lead; }
+function upcomingLeadNeed(range = 12) { for (let d = 0; d <= range; d += 1) { const n = leadNeedAt(st.s + d); if (n) return n; } return null; }
+const other = l => (l === 'L' ? 'R' : 'L');
+const leadWord = l => (l === 'L' ? 'left' : 'right');
+
+function onTap() {
+  if (!running || paused) return;
+  initAudio();
+  if (st.mode !== 'ride') return;
+  const f = nextFence();
+  if (f && f.front - st.s < 8.5) {
+    if (!settings.assists.takeoff) st.req = true;
+    return;
+  }
+  if (!settings.assists.leads) {
+    const inWindow = st.phase >= 0.6 && st.phase <= 0.98;
+    st.leadReq = inWindow ? 'clean' : 'late';
+  }
+}
+
+// ---------------------------------------------------------------- simulation
+const ta = mkTA();
+function readInput(dt) {
+  let lat = 0, fore = 0;
+  if (ctl() === 'tilt') { lat = tilt.lat; fore = tilt.fore; }
+  else { lat = stick.x * 1.1; fore = stick.y * 1.1; }
+  const kl = (keys.ArrowRight || keys.KeyD ? 1 : 0) - (keys.ArrowLeft || keys.KeyA ? 1 : 0);
+  const kf = (keys.ArrowUp || keys.KeyW ? 1 : 0) - (keys.ArrowDown || keys.KeyS ? 1 : 0);
+  kb.lat += (kl - kb.lat) * Math.min(1, dt * 5); kb.fore += (kf - kb.fore) * Math.min(1, dt * 5);
+  st.lat = clamp(lat + kb.lat, -1.3, 1.3); st.fore = clamp(fore + kb.fore, -1.3, 1.3);
+  if (window.__bot) window.__bot(st, dt);
+}
+
+function paceAssistTarget() {
+  const f = nextFence();
+  if (!f || f.front - st.s > 30 || f.front - st.s < 0.5) return L_WORK;
+  const toEnd = st.L * (1 - st.phase);
+  const D = f.front - f.ideal - (st.s + toEnd);
+  if (D < 1.5) return st.L;
+  const n = Math.max(1, Math.round(D / L_WORK));
+  return clamp(D / n, L_MIN, L_MAX);
+}
+
+function step(dt) {
+  readInput(dt);
+  const A = settings.assists;
+  if (st.mode === 'ride') rideStep(dt, A);
+  else if (st.mode === 'jump') jumpStep(dt, A);
+  else if (st.mode === 'refuse') refuseStep(dt);
+  else if (st.mode === 'fallen') fallStep(dt);
+  else if (st.mode === 'done') doneStep(dt);
+  if (st.mode === 'ride' || st.mode === 'jump') balanceStep(dt, A);
+  fences.forEach(f => f.topRails.forEach(r => {
+    if (!r.falling) return;
+    r.vy -= G * dt; r.mesh.position.y = Math.max(0.06, r.mesh.position.y + r.vy * dt); r.mesh.position.z += r.vz * dt;
+    r.mesh.rotation.y += r.spin * dt; if (r.mesh.position.y <= 0.06) { r.vy = 0; r.vz *= 0.9; r.spin *= 0.9; }
+  }));
+  if (st.timing && !st.finished) {
+    st.time += dt; st.recT += dt;
+    if (st.recT >= 0.05) { st.recT = 0; st.rec.push([+st.time.toFixed(2), +st.s.toFixed(2), +(st.jump ? st.jump.lift : 0).toFixed(2)]); }
+  }
+  if (!st.timing && st.s >= startS && st.mode !== 'fallen') { st.timing = true; st.time = 0; toast('Time started', 'info'); }
+  if (!st.finished && st.timing && st.s >= finishS && (st.mode === 'ride')) finishRun();
+}
+
+function rideStep(dt, A) {
+  trackAt(st.s, ta);
+  let kmax = 0; for (let d = 0; d <= 10; d += 2) kmax = Math.max(kmax, Math.abs(track.K[tIdx(st.s + d)]));
+  st.kLook = kmax;
+  const vmax = kmax > 1e-3 ? Math.sqrt(G * Math.tan(34 * DEG) / kmax) : 99;
+  let target;
+  if (A.pace) target = paceAssistTarget();
+  else if (settings.pace === 'buttons') target = paceBtn.collect || keys.KeyQ ? L_MIN : paceBtn.extend || keys.KeyE ? L_MAX : L_WORK;
+  else { const f = dz(st.fore, 0.15); target = f >= 0 ? L_WORK + f * (L_MAX - L_WORK) : L_WORK + f * (L_WORK - L_MIN); }
+  if (leadWrong()) target -= 0.25;
+  target = clamp(Math.min(target, vmax / STRIDE_HZ), 2.6, L_MAX);
+  st.Ltarget = target;
+  st.L += (target - st.L) * Math.min(1, dt * 2.2 * horseDef.resp);
+  const Lnow = st.chipLen || st.L;
+  st.v = Lnow * STRIDE_HZ;
+  st.s += st.v * dt;
+  const p0 = st.phase; st.phase += STRIDE_HZ * dt;
+  if (p0 < 0.22 && st.phase >= 0.22) hoof(false);
+  if (p0 < 0.44 && st.phase >= 0.44) { hoof(true); buzz(14); }
+  if (st.disunited > 0) st.disunited -= dt;
+  if (st.landT > 0) st.landT -= dt;
+  if (horseDef.spook > 0 && !st.spook && Math.random() < horseDef.spook * dt) { st.spook = { t: 0.6, dir: Math.random() < 0.5 ? -1 : 1 }; toast('Spook!', 'warn'); }
+  if (st.phase >= 1) { st.phase -= 1; hoof(false); onStrideEnd(A); }
+}
+
+function onStrideEnd(A) {
+  st.chipLen = 0;
+  if (st.leadReq) {
+    st.lead = other(st.lead);
+    if (st.leadReq === 'clean') toast('Clean change to ' + leadWord(st.lead), 'good');
+    else { st.disunited = 1.3; toast('Mistimed change: disunited', 'warn'); }
+    st.leadReq = null;
+  }
+  if (A.leads) { const need = upcomingLeadNeed(); if (need && need !== st.lead) st.lead = need; }
+  const f = nextFence();
+  if (!f) { st.req = false; return; }
+  const dNow = f.front - st.s, dNext = dNow - st.L;
+  if (A.takeoff && dNow < 5 && (Math.abs(dNow - f.ideal) <= Math.abs(dNext - f.ideal) || dNext < 0.9)) st.req = true;
+  if (st.req) {
+    st.req = false;
+    if (dNow > 4.0) { toast('Too early: he ignored the aid', 'warn'); }
+    else if (dNow > 0.5) {
+      if (st.conf < 0.35 && Math.random() < 0.5) return refuse(f, 'he had lost his confidence');
+      return takeOff(f, dNow, 'asked');
+    }
+  }
+  if (dNext < 0.9) {
+    if (dNow > 2.6) { st.chipLen = clamp(dNow - 1.15, 2.3, 3.3); st.flags.chip = true; return; }
+    const go = clamp(horseDef.bold * st.conf + horseDef.forgive - (dNow < 1.1 ? 0.5 : 0), 0, 1);
+    if (Math.random() < go) return takeOff(f, dNow, 'self');
+    return refuse(f, dNow < 1.1 ? 'too deep to jump' : 'no aid to take off');
+  }
+}
+
+function takeOff(f, d, how) {
+  const A = settings.assists, hd = horseDef;
+  const spotErr = d - f.ideal, notes = [];
+  let p = 0.025 + 0.16 * Math.pow(Math.max(0, Math.abs(spotErr) / ZONE - 1), 1.2);
+  if (f.type === 'vertical' && st.L > 4.0) { p += 0.1; notes.push('too flat and fast for a vertical'); }
+  if (f.type === 'oxer' && st.L < 3.2) { p += 0.1; notes.push('not enough pace for an oxer'); }
+  if (st.disunited > 0) { p += 0.1; notes.push('disunited on the approach'); }
+  const latErr = Math.abs(st.latDem - st.latAct);
+  if (latErr > 0.2) { p += (latErr - 0.2) * 0.4; notes.push('crooked in the saddle'); }
+  if (!A.seat && st.foreAct > (settings.pace === 'seat' && !A.pace ? 1.05 : 0.8)) { p += 0.15; st.S += 0.15; notes.push('you jumped ahead of him'); }
+  if (how === 'self') { p += 0.06; st.conf = Math.max(0, st.conf - 0.05); notes.push('he picked his own spot'); }
+  if (st.flags.chip) { notes.push('he chipped in a short stride'); st.S += 0.12; st.flags.chip = false; }
+  if (f.h > 1.1 && hd.scope < 0.85) p += 0.08 * (f.h - 1.1) / 0.1;
+  p *= (1 - hd.forgive * 0.5) * (1.3 - hd.care * 0.5);
+  const landDist = clamp(1.4 + d * 0.4, 1.6, 2.8);
+  const s1 = f.back + landDist, dist = s1 - st.s, v = Math.max(5.2, st.L * STRIDE_HZ);
+  st.jump = { f, d, how, spotErr, p, notes, s0: st.s, s1, v, dur: dist / v, t: 0, lift: 0, liftMax: f.h - 0.15, rolled: false, lb: false, latSum: 0, knocked: false };
+  st.mode = 'jump'; st.req = false; st.leadReq = null;
+  buzz(25);
+}
+
+function jumpStep(dt, A) {
+  const j = st.jump, f = j.f;
+  j.t += dt; st.s += j.v * dt; st.v = j.v;
+  if (st.s < f.s) { const u = clamp((st.s - j.s0) / (f.s - j.s0), 0, 1); j.lift = j.liftMax * Math.sin(Math.PI / 2 * u); j.pitch = -0.38 * (1 - u); }
+  else { const u = clamp((st.s - f.s) / (j.s1 - f.s), 0, 1); j.lift = j.liftMax * Math.cos(Math.PI / 2 * u); j.pitch = 0.32 * Math.sin(Math.PI * u * 0.8); }
+  j.latSum += st.latAct * dt;
+  if (!A.seat && !j.lbChecked && j.t > 0.2) {
+    j.lbChecked = true;
+    if (st.foreDem - st.foreAct > 0.55) {
+      j.lb = true; j.p += 0.15; j.notes.push('you were left behind and caught him in the mouth');
+      st.conf = Math.max(0, st.conf - 0.12 * horseDef.jab); st.S += 0.1;
+    }
+  }
+  if (!j.rolled && st.s >= f.s) {
+    j.rolled = true;
+    if (Math.random() < clamp(j.p, 0.01, 0.95)) {
+      j.knocked = true; st.faults += 4;
+      const back = f.type === 'oxer' && (j.spotErr > 0 || j.lb);
+      const rail = f.topRails[back ? f.topRails.length - 1 : 0];
+      rail.falling = true; rail.vy = 0.6; rail.vz = 0.8; rail.spin = (Math.random() - 0.5) * 1.2; thud(true);
+    }
+  }
+  if (j.t >= j.dur) land(A);
+}
+
+function land(A) {
+  const j = st.jump, f = j.f;
+  st.mode = 'ride'; st.phase = 0; st.landT = 0.5; st.s = j.s1; st.wob.burst = 0.35;
+  if (A.leads) st.lead = upcomingLeadNeed(16) || st.lead;
+  else { const avg = j.latSum / j.dur; if (avg > 0.25) st.lead = 'R'; else if (avg < -0.25) st.lead = 'L'; }
+  f.done = true; thud(false); hoof(true);
+  const spotWord = Math.abs(j.spotErr) <= ZONE ? 'good spot' : j.spotErr > 0 ? 'long spot' : 'deep spot';
+  if (!j.knocked && Math.abs(j.spotErr) <= ZONE && !j.lb) st.conf = Math.min(1, st.conf + 0.04);
+  const res = j.knocked ? 'down' : 'clear';
+  st.log.push({ n: f.n, result: res, d: j.d, spotWord, notes: j.notes.slice() });
+  const why = j.notes[0] ? ': ' + j.notes[0] : '';
+  toast(`${f.n} ${j.knocked ? 'down' : 'clear'} · ${spotWord} ${j.d.toFixed(1)} m${j.knocked ? why : ''}`, j.knocked ? 'bad' : Math.abs(j.spotErr) <= ZONE ? 'good' : 'warn');
+  st.jump = null;
+}
+
+function refuse(f, reason) {
+  st.mode = 'refuse'; st.refusals++; st.faults += 4; st.conf = Math.max(0, st.conf - 0.1); st.S += 0.25;
+  st.refuse = { f, t: 0, v: st.L * STRIDE_HZ };
+  st.req = false; st.leadReq = null; st.chipLen = 0; st.flags.chip = false;
+  st.log.push({ n: f.n, result: 'refusal', d: null, spotWord: '', notes: [reason] });
+  toast(`Refusal at ${f.n}: ${reason}`, 'bad'); thud(false);
+}
+function refuseStep(dt) {
+  const r = st.refuse; r.t += dt;
+  const v = Math.max(0, r.v - 8 * r.t); st.v = v;
+  st.s = Math.min(st.s + v * dt, r.f.front - 0.8);
+  if (st.S >= 1) return fall();
+  if (r.t > 1.8) {
+    if (st.refusals >= 2) return eliminate('Second refusal');
+    const prev = fences.filter(x => x.done).pop();
+    st.s = Math.max(prev ? prev.back + 4 : 0, r.f.front - 24);
+    st.mode = 'ride'; st.phase = 0.5; st.L = L_WORK; st.refuse = null; st.S = Math.min(st.S, 0.5);
+    toast('Represent the fence', 'info');
+  }
+}
+
+function balanceStep(dt, A) {
+  const hd = horseDef;
+  trackAt(st.s, ta);
+  let latDem = -Math.atan(st.v * st.v * ta.k / G) / LEAN_REF;
+  let amp = 0;
+  if (st.disunited > 0) amp += 0.4;
+  if (leadWrong() && st.mode === 'ride') amp += 0.28;
+  if (st.wob.burst > 0) { amp += 0.35; st.wob.burst -= dt; }
+  st.wob.t += dt;
+  latDem += amp * (0.6 * Math.sin(5.1 * st.wob.t + st.wob.p1) + 0.4 * Math.sin(8.3 * st.wob.t + st.wob.p2));
+  if (st.spook) { latDem += st.spook.dir * 0.75 * Math.sin(Math.PI * (1 - st.spook.t / 0.6)); st.spook.t -= dt; if (st.spook.t <= 0) st.spook = null; }
+  latDem = clamp(latDem, -1.2, 1.2);
+  let foreDem = 0.15, tolF = 0.65, foreFree = false, landing = false;
+  if (st.mode === 'jump') { const u = st.jump.t / st.jump.dur; foreDem = u < 0.55 ? 0.9 : 0.55; tolF = 0.38; }
+  else if (st.landT > 0) { foreDem = -0.45; tolF = 0.4; landing = true; }
+  else if (!A.pace && settings.pace === 'seat') foreFree = true;   // on the flat, the fore axis is your pace
+  foreDem += 0.06 * Math.sin(2 * Math.PI * st.phase);
+  st.latDem = latDem; st.foreDem = foreDem; st.foreFree = foreFree;
+  const k = Math.min(1, dt / 0.12);
+  const latTarget = A.balance ? latDem : st.lat + (latDem - st.lat) * hd.forgive * 0.5;
+  let foreTarget;
+  if (A.seat && (st.mode === 'jump' || landing)) foreTarget = foreDem;
+  else if (A.seat && !foreFree && settings.pace === 'buttons') foreTarget = foreDem;
+  else if (A.seat && A.pace) foreTarget = foreDem;
+  else foreTarget = st.fore + (foreDem - st.fore) * hd.forgive * 0.4;
+  st.latAct += (latTarget - st.latAct) * k;
+  st.foreAct += (foreTarget - st.foreAct) * k;
+  let tolL = 0.22; if (st.stage >= 2) { tolL *= 0.7; tolF *= 0.7; }
+  st.tolL = tolL; st.tolF = tolF;
+  const eL = latDem - st.latAct, eF = foreFree ? 0 : foreDem - st.foreAct;
+  const exL = Math.max(0, Math.abs(eL) - tolL), exF = Math.max(0, Math.abs(eF) - tolF) * (landing ? 1.5 : 1), ex = exL + exF;
+  if (ex > 0) st.cause = exL >= exF ? (st.spook ? 'spook' : Math.abs(ta.k) > 1 / 25 ? 'turn' : 'side') : st.mode === 'jump' ? (eF > 0 ? 'behind' : 'ahead') : landing ? 'landing' : (eF > 0 ? 'behind' : 'ahead');
+  if (ex > 0) st.S += ex * 1.7 * (1 - hd.forgive * 0.6) * dt; else st.S = Math.max(0, st.S - 0.3 * dt);
+  st.slip = Math.sign(eL) || 1;
+  const stage = st.S < 0.3 ? 0 : st.S < 0.55 ? 1 : st.S < 0.8 ? 2 : 3;
+  if (stage > st.stage) { toast(['', 'Wobble!', 'Lost a stirrup!', 'Hanging off!'][stage], stage >= 2 ? 'bad' : 'warn'); buzz(60); }
+  st.stage = stage;
+  if (st.S >= 1) fall();
+}
+
+function fall() {
+  if (st.mode === 'fallen') return;
+  const prevMode = st.mode;
+  st.mode = 'fallen';
+  trackAt(st.s, ta);
+  scene.attach(rider.root);
+  const side = new THREE.Vector3(ta.t.z, 0, -ta.t.x).multiplyScalar(st.slip || 1);   // left vector times slip side
+  st.fall = { t: 0, vel: ta.t.clone().multiplyScalar(st.v * 0.7).add(side.multiplyScalar(1.4)).add(new THREE.Vector3(0, prevMode === 'jump' ? 1.2 : 1.8, 0)), spin: 3 + Math.random() * 2, hv: st.v };
+  st.jump = null; thud(true); buzz(200);
+  const why = { turn: 'not leaning into the turn', side: 'unbalanced to the side', spook: 'unseated by a spook', behind: 'left behind the movement', ahead: 'tipped too far forward', landing: 'tipped forward on landing' }[st.cause] || 'lost your balance';
+  st.log.push({ n: (nextFence() || {}).n || '-', result: 'fall', d: null, spotWord: '', notes: ['you came off: ' + why] });
+  toast('Fall!', 'bad');
+}
+function fallStep(dt) {
+  const fl = st.fall; fl.t += dt;
+  fl.hv = Math.max(0, fl.hv - 6 * dt); st.v = fl.hv; st.s += fl.hv * dt;
+  const r = rider.root;
+  if (r.position.y > 0.2) {
+    fl.vel.y -= G * dt; r.position.addScaledVector(fl.vel, dt); r.rotation.x += fl.spin * dt;
+    if (r.position.y <= 0.2) { r.position.y = 0.2; r.rotation.set(-Math.PI / 2, r.rotation.y, 0); fl.vel.set(0, 0, 0); thud(false); }
+  }
+  if (fl.t > 2.2) eliminate('Fall');
+}
+function eliminate(reason) { st.elim = reason; st.mode = 'done'; st.finished = true; st.endT = 0; }
+function doneStep(dt) {
+  st.endT += dt;
+  if (st.v > 0) { st.v = Math.max(0, st.v - 3 * dt); st.s = Math.min(track.length - 0.5, st.s + st.v * dt); st.phase = (st.phase + STRIDE_HZ * dt * Math.min(1, st.v / 4)) % 1; }
+  if (st.endT > 1.3 && running) showResults();
+}
+function finishRun() {
+  st.finished = true; st.mode = 'done'; st.endT = 0;
+  toast('Finish!', 'good');
+}
+
+// ---------------------------------------------------------------- posing and camera
+const tb = mkTA();
+function legPose(L, ph, jumpState) {
+  for (const [k, leg] of Object.entries(L)) {
+    if (jumpState) {
+      const { u, fore } = jumpState;
+      if (leg.fore) { const tuck = u < 0.7; leg.hip.rotation.x = tuck ? -1.05 : -0.45; leg.knee.rotation.x = tuck ? 2.0 : 0.15; }
+      else { const tuck = u > 0.25; leg.hip.rotation.x = tuck ? 0.15 : 0.75; leg.knee.rotation.x = tuck ? -1.2 : -0.1; }
+      continue;
+    }
+    const off = st.lead === 'L' ? { RH: 0, LH: 0.22, RF: 0.22, LF: 0.44 }[k] : { LH: 0, RH: 0.22, LF: 0.22, RF: 0.44 }[k];
+    const p = (((ph - off) % 1) + 1) % 1;
+    let hip, knee;
+    if (p < 0.32) { hip = -0.5 + p / 0.32; knee = 0.05; }
+    else { const q = (p - 0.32) / 0.68, sm = q * q * (3 - 2 * q); hip = 0.5 - sm; knee = Math.sin(Math.PI * q) * 1.25; }
+    leg.hip.rotation.x = hip; leg.knee.rotation.x = leg.fore ? knee : -knee * 0.8;
+  }
+}
+function poseHorse(H, s, ph, lift, pitch, jumpState, still) {
+  trackAt(s, tb); H.root.position.copy(tb.p); H.root.rotation.y = Math.atan2(tb.t.x, tb.t.z);
+  H.body.position.y = 1.25 + lift + (jumpState || still ? 0 : 0.05 * Math.sin(2 * Math.PI * ph));
+  H.body.rotation.x = pitch + (jumpState || still ? 0 : 0.045 * Math.sin(2 * Math.PI * ph + 1.2));
+  H.body.rotation.z = still ? 0 : clamp(-Math.atan(st.v * st.v * tb.k / G) * 0.55, -0.35, 0.35);
+  H.neckPivot.rotation.x = jumpState ? 0.25 : 0.06 * Math.sin(2 * Math.PI * ph);
+  const sh = 1 - lift * 0.25; H.shadow.scale.set(0.6 * sh, 1.4 * sh, 1);
+  if (still) { for (const leg of Object.values(H.legs)) { leg.hip.rotation.x = 0; leg.knee.rotation.x = 0; } }
+  else legPose(H.legs, ph, jumpState);
+}
+function poseRider() {
+  rider.torsoPivot.rotation.x = 0.12 + st.foreAct * 0.75;
+  rider.torsoPivot.rotation.z = st.latAct * 0.45;
+  rider.hips.position.x = (st.slip || 0) * st.S * 0.28;
+  rider.hips.rotation.z = (st.slip || 0) * st.S * 0.4;
+}
+
+const camPos = new THREE.Vector3(-45, 8, 22), camLook = new THREE.Vector3(), tmpV = new THREE.Vector3(), tmpL = new THREE.Vector3();
+let menuOrbit = 0;
+function updateCamera(dt) {
+  if (!running) {
+    menuOrbit += dt * 0.06;
+    camera.position.set(Math.cos(menuOrbit) * 48, 18, Math.sin(menuOrbit) * 34); camera.lookAt(0, 0, 0); return;
+  }
+  trackAt(st.s, tb);
+  const hp = horse.root.position;
+  const fp = settings.view === 'rider' && st.mode !== 'fallen';
+  rider.torsoPivot.visible = !fp;
+  if (fp) {
+    horse.body.getWorldPosition(tmpV); tmpV.y += 1.3; tmpV.addScaledVector(tb.t, -0.35);
+    tmpL.copy(tmpV).addScaledVector(tb.t, 12); tmpL.y = 0.9;
+    camPos.lerp(tmpV, 1 - Math.exp(-dt * 18)); camLook.lerp(tmpL, 1 - Math.exp(-dt * 10));
+  } else {
+    tmpV.copy(hp).addScaledVector(tb.t, -7.5); tmpV.y = 3.4;
+    tmpL.copy(hp).addScaledVector(tb.t, 5); tmpL.y = 1.0;
+    camPos.lerp(tmpV, 1 - Math.exp(-dt * 4)); camLook.lerp(tmpL, 1 - Math.exp(-dt * 6));
+  }
+  camera.position.copy(camPos); camera.lookAt(camLook);   // camera.up stays world up: horizon locked
+}
+
+function updateGuides() {
+  guideRings.forEach(r => r.visible = false);
+  fences.forEach(f => f.zone.visible = false);
+  if (!running || !settings.guides || st.mode !== 'ride') return;
+  const f = nextFence(); if (!f) return;
+  f.zone.visible = f.front - st.s < 40;
+  if (f.front - st.s > 26) return;
+  const Lnow = st.chipLen || st.L;
+  let sEnd = st.s + Lnow * (1 - st.phase);
+  for (let i = 0; i < guideRings.length && sEnd < f.front - 0.5; i++) {
+    const r = guideRings[i]; trackAt(sEnd, tb); r.position.set(tb.p.x, 0.04, tb.p.z); r.visible = true;
+    r.material.color.setHex(Math.abs(f.front - sEnd - f.ideal) <= ZONE ? 0x22c55e : 0xffffff);
+    sEnd += i === 0 && st.chipLen ? st.L : st.L;
+  }
+}
+
+// ---------------------------------------------------------------- HUD
+const $ = id => document.getElementById(id);
+const balCv = $('balance'), balCx = balCv.getContext('2d'), beatCv = $('beat'), beatCx = beatCv.getContext('2d');
+let toastTimer = 0;
+function pron(t) { return horseDef && horseDef.she ? t.replace(/\bhe\b/g, 'she').replace(/\bHe\b/g, 'She').replace(/\bhim\b/g, 'her').replace(/\bhis\b/g, 'her') : t; }
+function toast(msg, cls = 'info') { const el = $('toast'); el.textContent = pron(msg); el.className = 'hud show ' + cls; toastTimer = 1.6; }
+function drawBalance() {
+  const c = balCx, W = balCv.width, H = balCv.height, cx = W / 2, cy = H / 2, R = W * 0.44, sc = R / 1.2;
+  c.clearRect(0, 0, W, H);
+  c.fillStyle = 'rgba(15,23,42,.55)'; c.beginPath(); c.arc(cx, cy, R + 8, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,.15)'; c.lineWidth = 2; c.beginPath(); c.moveTo(cx - R, cy); c.lineTo(cx + R, cy); c.moveTo(cx, cy - R); c.lineTo(cx, cy + R); c.stroke();
+  const zx = cx + st.latDem * sc, zy = cy - st.foreDem * sc;
+  const rw = st.tolL * sc, rh = st.foreFree ? R : st.tolF * sc;
+  c.fillStyle = st.stage >= 2 ? 'rgba(239,68,68,.35)' : st.stage === 1 ? 'rgba(245,158,11,.35)' : 'rgba(34,197,94,.35)';
+  c.strokeStyle = st.stage >= 2 ? '#ef4444' : st.stage === 1 ? '#f59e0b' : '#22c55e'; c.lineWidth = 3;
+  c.beginPath(); c.ellipse(zx, st.foreFree ? cy : zy, rw, rh, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+  const dx = cx + clamp(st.latAct, -1.25, 1.25) * sc, dy = cy - clamp(st.foreAct, -1.25, 1.25) * sc;
+  c.fillStyle = '#fff'; c.beginPath(); c.arc(dx, dy, 11, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#0f172a'; c.lineWidth = 3; c.stroke();
+  c.fillStyle = 'rgba(248,250,252,.7)'; c.font = 'bold 20px system-ui'; c.textAlign = 'center';
+  c.fillText(st.foreFree ? 'pace ↕' : 'fwd', cx, cy - R + 22);
+  if (st.stage > 0) { c.fillStyle = st.stage >= 2 ? '#fca5a5' : '#fcd34d'; c.font = 'bold 22px system-ui'; c.fillText(['', 'Wobble', 'No stirrup', 'Hanging off'][st.stage], cx, cy + R - 14); }
+  // security meter around the rim
+  c.strokeStyle = st.S > 0.55 ? '#ef4444' : st.S > 0.3 ? '#f59e0b' : '#22c55e'; c.lineWidth = 7;
+  c.beginPath(); c.arc(cx, cy, R + 4, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * clamp(1 - st.S, 0, 1)); c.stroke();
+}
+function drawBeat() {
+  const c = beatCx, W = beatCv.width, H = beatCv.height;
+  c.clearRect(0, 0, W, H);
+  c.fillStyle = 'rgba(15,23,42,.55)'; c.beginPath(); c.roundRect(0, 0, W, H, 16); c.fill();
+  const x0 = 18, x1 = W - 18, y = 44, w = x1 - x0;
+  c.fillStyle = settings.assists.leads ? 'rgba(148,163,184,.25)' : 'rgba(34,197,94,.45)'; c.fillRect(x0 + w * 0.6, y - 16, w * 0.38, 32);
+  c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 3; c.beginPath(); c.moveTo(x0, y); c.lineTo(x1, y); c.stroke();
+  const ph = st.mode === 'ride' ? st.phase : 0;
+  [0, 0.22, 0.44].forEach((b, i) => { const lit = ph >= b && ph < b + 0.12; c.fillStyle = lit ? '#fde047' : 'rgba(255,255,255,.7)'; c.beginPath(); c.arc(x0 + w * b + 8, y, lit ? 13 : (i === 2 ? 10 : 8), 0, Math.PI * 2); c.fill(); });
+  c.fillStyle = '#fff'; c.fillRect(x0 + w * ph - 2, y - 20, 4, 40);
+  // pace bar
+  const L = st.chipLen || st.L, pf = (L - L_MIN) / (L_MAX - L_MIN);
+  c.fillStyle = 'rgba(255,255,255,.2)'; c.fillRect(x0, 94, w, 12);
+  c.fillStyle = '#38bdf8'; c.fillRect(x0 + w * clamp(pf, 0, 1) - 4, 88, 8, 24);
+  c.fillStyle = 'rgba(248,250,252,.75)'; c.font = '600 18px system-ui'; c.textAlign = 'left'; c.fillText('short', x0, 82); c.textAlign = 'right'; c.fillText('long', x1, 82);
+  c.textAlign = 'center'; c.fillText(L.toFixed(1) + ' m', W / 2, 82);
+}
+function updateHud(dt) {
+  if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) $('toast').classList.remove('show'); }
+  if (!running) return;
+  const f = nextFence();
+  $('fenceNo').textContent = f ? `Fence ${f.n}/${fences.length}` : 'To the finish';
+  $('timer').textContent = `${st.time.toFixed(1)} s / ${timeAllowed} s`;
+  $('faults').textContent = `${st.faults} fault${st.faults === 1 ? '' : 's'}`;
+  const wrong = leadWrong() || st.disunited > 0;
+  const le = $('lead'); le.textContent = st.disunited > 0 ? 'Disunited' : `Lead: ${leadWord(st.lead)}${wrong ? ' ✗' : ''}`; le.className = wrong ? 'wrong' : '';
+  $('confFill').style.width = (st.conf * 100).toFixed(0) + '%';
+  $('confFill').style.background = st.conf < 0.4 ? '#ef4444' : st.conf < 0.7 ? '#f59e0b' : '#22c55e';
+  drawBalance(); drawBeat();
+}
+function setHudVisible(v) {
+  for (const id of ['hudTop', 'gauges']) $(id).style.display = v ? '' : 'none';
+  stickEl.style.display = v && ctl() === 'pad' ? 'block' : 'none';
+  const pb = v && settings.pace === 'buttons' && !settings.assists.pace;
+  $('btnCollect').style.display = pb ? 'block' : 'none'; $('btnExtend').style.display = pb ? 'block' : 'none';
+  $('touch').style.display = v ? 'block' : 'none';
+}
+
+// ---------------------------------------------------------------- results
+function showResults() {
+  running = false; paused = true; setHudVisible(false);
+  const tf = st.elim ? 0 : Math.max(0, Math.ceil(st.time - timeAllowed - 1e-9));
+  const total = st.faults + tf;
+  const best = loadBest();
+  let newBest = false;
+  if (!st.elim) {
+    const better = !best || total < best.total || (total === best.total && st.time < best.time);
+    if (better) { saveBest({ total, time: +st.time.toFixed(2), rec: st.rec }); newBest = true; }
+  }
+  $('resHead').textContent = st.elim ? `Eliminated: ${st.elim.toLowerCase()}` : total === 0 ? 'Clear round!' : `${total} fault${total === 1 ? '' : 's'}`;
+  $('resStats').innerHTML = `<span>Time <b>${st.time.toFixed(2)} s</b></span><span>Time allowed <b>${timeAllowed} s</b></span><span>Jumping faults <b>${st.faults}</b></span><span>Time faults <b>${tf}</b></span><span>Horse <b>${horseDef.name}</b></span><span>Realism <b>${isCustom() ? 'custom' : settings.realism + ' of 5'}</b></span>` +
+    (newBest ? '<span><b style="color:#86efac">New personal best: your ghost will ride with you</b></span>' : best ? `<span>Best <b>${best.total} faults, ${best.time.toFixed(2)} s</b></span>` : '');
+  $('resRows').innerHTML = st.log.map(e => `<tr><td>${e.n}</td><td class="r-${e.result === 'fall' ? 'down' : e.result}">${e.result}</td><td>${e.d != null ? e.spotWord + ', ' + e.d.toFixed(1) + ' m' : ''}</td><td>${pron(e.notes.join('; ')) || 'nicely ridden'}</td></tr>`).join('');
+  $('resTip').textContent = pron(tipFor());
+  $('results').classList.remove('hidden');
+}
+function tipFor() {
+  const notes = st.log.flatMap(e => e.notes.concat(e.spotWord ? [e.spotWord] : []));
+  const count = w => notes.filter(n => n.includes(w)).length;
+  if (st.elim === 'Fall') return {
+    turn: 'Tip: lean into turns early. The green zone slides sideways as the turn tightens; keep the white dot inside it.',
+    side: 'Tip: keep the white dot inside the green zone. A wrong lead or a disunited canter makes the zone wobble.',
+    spook: 'Tip: spooks shove the zone sideways for half a second. Follow it, then come back to the middle.',
+    behind: 'Tip: fold forward as he leaves the ground. The zone jumps up at take-off; meet it.',
+    ahead: 'Tip: do not throw yourself forward early. Fold as he takes off, not before.',
+    landing: 'Tip: on landing, the zone drops behind centre. Sit back until it returns to the middle.' }[st.cause] || 'Tip: keep the white dot inside the green zone.';
+  if (count('left behind')) return 'Tip: start leaning forward as you tap for take-off; he leaves the ground at the end of that stride, and you need to be with him.';
+  if (count('ahead')) return 'Tip: wait for the jump. Fold as he leaves the ground, not on the approach.';
+  if (count('no aid') || count('own spot')) return 'Tip: tap once in the stride where the ring turns green, so he knows where to leave the ground.';
+  if (count('deep')) return 'Tip: your spots were deep. Tap a stride earlier, or lengthen the stride on the approach.';
+  if (count('long')) return 'Tip: your spots were long. Wait a stride longer, or shorten the stride on the approach.';
+  if (count('Disunited') || count('disunited')) return 'Tip: ask for changes in the green gap after the third hoofbeat, or lean towards the turn in the air to land on the right lead.';
+  if (!st.elim && st.faults === 0) return settings.realism < 5 ? 'Clean. Try the next realism level, or switch off the stride guides.' : 'Clean at full sim. Now chase the ghost.';
+  return 'Tip: steady rhythm wins. Keep the stride even and the dot in the zone.';
+}
+
+// ---------------------------------------------------------------- menu wiring
+function renderMenu() {
+  const hb = $('horses'); hb.innerHTML = '';
+  for (const [k, h] of Object.entries(HORSES)) {
+    const b = document.createElement('button'); b.className = 'card' + (settings.horse === k ? ' sel' : '');
+    let best = null; try { best = JSON.parse(localStorage.getItem('cr-best-' + k) || 'null'); } catch (e) {}
+    b.innerHTML = `<b>${h.name}</b><span>${h.desc}</span>${best ? `<span class="best">Best: ${best.total} faults, ${best.time.toFixed(2)} s</span>` : ''}`;
+    b.onclick = () => { settings.horse = k; saveSettings(); swapHorse(); renderMenu(); };
+    hb.appendChild(b);
+  }
+  document.querySelectorAll('#ctlSeg button').forEach(b => b.classList.toggle('sel', b.dataset.v === settings.control));
+  $('tiltBox').style.display = settings.control === 'tilt' ? '' : 'none';
+  if (tilt.blocked && !tilt.have) $('tiltStatus').textContent = BLOCKED_MSG;
+  $('padHint').style.display = ctl() === 'pad' ? '' : 'none';
+  document.querySelectorAll('#paceSeg button').forEach(b => b.classList.toggle('sel', b.dataset.v === settings.pace));
+  $('paceHint').textContent = settings.pace === 'seat'
+    ? 'Seat lean: between fences, lean forward to lengthen the stride and back to shorten it. Over fences the same axis is your jump position.'
+    : 'Buttons: hold Steady to shorten the stride and Push to lengthen it (Q and E on a keyboard). Forward and back lean is only your jump position.';
+  $('realism').value = settings.realism;
+  const custom = isCustom();
+  $('realismName').textContent = custom ? 'Custom mix' : LEVEL_NAMES[settings.realism];
+  const al = $('assistList'); al.innerHTML = '';
+  ORDER.forEach(k => {
+    const row = document.createElement('div'); row.className = 'assist';
+    const on = settings.assists[k];
+    row.innerHTML = `<span>${ASSIST_LABEL[k]}</span>`;
+    const b = document.createElement('button'); b.className = 'plain' + (on ? '' : ' you'); b.textContent = on ? 'Assisted' : 'You';
+    b.onclick = () => { settings.assists[k] = !settings.assists[k]; saveSettings(); renderMenu(); };
+    row.appendChild(b); al.appendChild(row);
+  });
+  $('guides').checked = settings.guides; $('sound').checked = settings.sound; $('haptics').checked = settings.haptics;
+  $('invLat').checked = settings.invLat; $('invFore').checked = settings.invFore;
+}
+function isCustom() { return ORDER.some((k, i) => settings.assists[k] !== (i >= settings.realism)); }
+function setControl(v) { settings.control = v; saveSettings(); renderMenu(); }
+document.querySelectorAll('#ctlSeg button').forEach(b => b.onclick = () => { setControl(b.dataset.v); if (b.dataset.v === 'tilt' && !tilt.have && !tilt.asked) enableTilt(); });
+document.querySelectorAll('#paceSeg button').forEach(b => b.onclick = () => { settings.pace = b.dataset.v; saveSettings(); renderMenu(); });
+$('realism').oninput = e => { setLevel(settings, +e.target.value); saveSettings(); renderMenu(); };
+for (const id of ['guides', 'sound', 'haptics', 'invLat', 'invFore']) $(id).onchange = e => { settings[id] = e.target.checked; saveSettings(); };
+$('enableTilt').onclick = enableTilt;
+$('setNeutral').onclick = () => { setNeutral(); $('tiltStatus').textContent = tilt.have ? 'Neutral set.' : 'Tap Enable tilt first.'; };
+$('rideBtn').onclick = startRide;
+$('againBtn').onclick = startRide;
+$('menuBtn').onclick = () => { $('results').classList.add('hidden'); $('menu').classList.remove('hidden'); renderMenu(); };
+$('pauseBtn').addEventListener('pointerdown', e => e.stopPropagation());
+$('pauseBtn').onclick = pauseGame;
+$('viewBtn').addEventListener('pointerdown', e => e.stopPropagation());
+$('viewBtn').onclick = () => { settings.view = settings.view === 'chase' ? 'rider' : 'chase'; saveSettings(); };
+function pauseGame() { paused = true; running = false; setHudVisible(false); $('menu').classList.remove('hidden'); $('resumeBtn').style.display = 'block'; $('rideBtn').textContent = 'Restart'; renderMenu(); }
+$('resumeBtn').onclick = () => { initAudio(); $('menu').classList.add('hidden'); $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride'; running = true; paused = false; last = performance.now(); setHudVisible(true); };
+document.addEventListener('visibilitychange', () => { if (document.hidden && running) pauseGame(); });
+
+async function startRide() {
+  initAudio();
+  if (settings.control === 'tilt' && !tilt.have && !tilt.asked) { $('rideBtn').textContent = 'Checking tilt…'; await enableTilt(); $('rideBtn').textContent = 'Ride'; }
+  $('menu').classList.add('hidden'); $('results').classList.add('hidden'); $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride';
+  if (HORSES[settings.horse] !== horseDef) swapHorse();
+  resetRun(); running = true; paused = false;
+  trackAt(0, tb); camPos.copy(tb.p).addScaledVector(tb.t, -8); camPos.y = 3.4; camLook.copy(tb.p);
+  setHudVisible(true);
+  toast(settings.control === 'tilt' && !tilt.have ? 'No tilt sensor here: using the thumb pad' : `${horseDef.name}: ${fences.length} fences, ${timeAllowed} s allowed`, settings.control === 'tilt' && !tilt.have ? 'warn' : 'info');
+}
+
+function drawTiltPreview() {
+  const cv = $('tiltPreview'); if (!cv || settings.control !== 'tilt' || $('menu').classList.contains('hidden')) return;
+  const c = cv.getContext('2d'), W = cv.width, R = W * 0.42; c.clearRect(0, 0, W, W);
+  c.strokeStyle = 'rgba(255,255,255,.3)'; c.lineWidth = 3; c.beginPath(); c.arc(W / 2, W / 2, R, 0, Math.PI * 2); c.moveTo(W / 2 - R, W / 2); c.lineTo(W / 2 + R, W / 2); c.moveTo(W / 2, W / 2 - R); c.lineTo(W / 2, W / 2 + R); c.stroke();
+  c.fillStyle = tilt.have ? '#22c55e' : '#64748b'; c.beginPath(); c.arc(W / 2 + clamp(tilt.lat, -1.2, 1.2) * R / 1.2, W / 2 - clamp(tilt.fore, -1.2, 1.2) * R / 1.2, 12, 0, Math.PI * 2); c.fill();
+}
+
+// ---------------------------------------------------------------- main loop
+let last = performance.now();
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (running && !paused && !window.__freeze) { const n = Math.ceil(dt / (1 / 120)); for (let i = 0; i < n; i++) step(dt / n); }
+  render(dt);
+}
+function render(dt) {
+  if (!running && !st.mode) { st.v = 0; poseHorse(horse, 6, 0, 0, 0, null, true); }
+  else {
+    const j = st.jump;
+    const still = st.mode === 'refuse' && st.v < 0.5 || (st.mode === 'done' && st.v < 0.3) || (st.mode === 'fallen' && st.v < 0.3);
+    poseHorse(horse, st.s || 0, st.phase || 0, j ? j.lift : 0, j ? j.pitch : 0, j ? { u: j.t / j.dur } : null, still);
+    if (st.mode !== 'fallen') poseRider();
+    if (ghostData && running && st.timing && st.time > 0) {
+      const i = ghostData.findIndex(r => r[0] >= st.time);
+      if (i > 0) { const g = ghostData[i]; ghost.root.visible = true; poseHorse(ghost, g[1], (st.time * STRIDE_HZ) % 1, g[2], 0, g[2] > 0.05 ? { u: 0.5 } : null, false); }
+      else ghost.root.visible = false;
+    } else ghost.root.visible = false;
+  }
+  updateGuides(); updateCamera(dt); updateHud(dt); drawTiltPreview();
+  renderer.render(scene, camera);
+}
+resetRun(); st.mode = ''; renderMenu(); setHudVisible(false); requestAnimationFrame(frame);
+window.__cr = { st, settings, fences, track, startRide, onTap, step, setLevel: l => { setLevel(settings, l); }, timeAllowed, startS, finishS, get running() { return running; } };
+</script>
+</body>
+</html>
