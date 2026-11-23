@@ -78,6 +78,11 @@
   .ph { display:flex; justify-content:space-between; align-items:center; gap:10px; }
   #hubHint { top:10px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,.6); padding:8px 14px; border-radius:12px; font-weight:600; display:none; white-space:nowrap; }
   #hubHome { position:fixed; z-index:5; top:8px; left:10px; display:none; }
+  #navBack { position:fixed; z-index:12; top:10px; left:10px; display:none; width:60px; height:60px; font-size:30px; line-height:1; padding:0; border-radius:16px; }
+  .overlay.side .panel { margin-top:0; }
+  #fade { position:fixed; inset:0; z-index:11; background:#0b0f19; opacity:0; pointer-events:none; transition:opacity .35s; }
+  #itemBody ol { margin:8px 0 0; padding-left:22px; } #itemBody li { margin:4px 0; }
+  #itemBody .primary { margin-top:14px; }
   .swatches { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 4px; }
   .sw { width:44px; height:44px; border-radius:50%; border:3px solid rgba(255,255,255,.25); }
   .sw.sel { border-color:#fff; box-shadow:0 0 0 3px var(--accent); }
@@ -123,30 +128,18 @@
 <div id="hubHint" class="hud"><span id="hubMode">Career</span> · Tap a place in the yard</div>
 <button id="hubHome" class="btn-hud">⌂</button>
 
-<div id="stablePanel" class="overlay side hidden"><div class="panel">
-  <div class="ph"><h1>Stable block</h1><button class="plain back">Back</button></div>
-  <p class="sub">Choose who you ride today.</p>
-  <div id="horses" class="cards"></div>
+<div id="itemPanel" class="overlay side hidden"><div class="panel">
+  <h1 id="itemTitle"></h1>
+  <div id="itemBody"></div>
 </div></div>
-<div id="tackPanel" class="overlay side hidden"><div class="panel">
-  <div class="ph"><h1>Tack room</h1><button class="plain back">Back</button></div>
-  <p class="sub">Your colours. Kit with real effects (saddles, neck straps, air vests) will live here too.</p>
-  <div id="kitRows"></div>
-</div></div>
-<div id="boardPanel" class="overlay side hidden"><div class="panel">
-  <div class="ph"><h1>Notice board</h1><button class="plain back">Back</button></div>
-  <p class="sub">Competitions and limited events. Limited events force some assists off for that ride.</p>
-  <div id="events"></div>
-</div></div>
-<div id="officePanel" class="overlay side hidden"><div class="panel">
-  <div class="ph"><h1>Yard office</h1><button class="plain back">Back</button></div>
-  <div id="officeBody"></div>
-</div></div>
+<button id="navBack" class="btn-hud" aria-label="Back">←</button>
+<div id="fade"></div>
 
 <div id="menu" class="overlay side hidden">
   <div class="panel">
-    <div class="ph"><h1>Menage</h1><button id="menageBack" class="plain">Back to yard</button></div>
-    <p class="sub">Free practice on the showjumping course. Lessons will be taught here too.</p>
+    <h1>The course</h1>
+    <p class="sub">Free practice over seven fences. Set your controls and assists, then ride.</p>
+    <div id="horses" class="cards" style="display:none"></div>
 
     <h2>Controls</h2>
     <div class="seg" id="ctlSeg"><button data-v="tilt">Tilt</button><button data-v="pad">Thumb pad</button></div>
@@ -348,15 +341,13 @@ function addOutline(root, colour = 0x2a1c12) {
   const blob = new THREE.SphereGeometry(1, 18, 12);
   for (let i = 0; i < 60; i++) {
     const a = rnd() * Math.PI * 2, r = 58 + rnd() * 70, x = Math.cos(a) * r * 1.25, z = Math.sin(a) * r;
-    if (Math.abs(x) < 42 && z < -24 && z > -68) continue;
+    if ((x / 52) ** 2 + ((z + 44) / 32) ** 2 < 1 || (x > 30 && x < 64 && z > -64 && z < -18)) continue;
     const sc = 0.8 + rnd() * 0.9, tr = new THREE.Group();
     const t = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.42, 4, 7), trunk); t.position.y = 2; tr.add(t);
     const leaf = leaves[Math.floor(rnd() * leaves.length)];
     for (let k = 0; k < 5; k++) { const b = new THREE.Mesh(blob, leaf); const rr = 1.8 + rnd() * 1.4; b.scale.set(rr, rr * 0.85, rr); b.position.set((rnd() - 0.5) * 3, 5 + rnd() * 2.5, (rnd() - 0.5) * 3); tr.add(b); }
     tr.scale.setScalar(sc); tr.position.set(x, 0, z); tr.rotation.y = rnd() * 6; scene.add(tr);
   }
-  const barn = new THREE.Mesh(new THREE.BoxGeometry(30, 5, 9), lam(0xa65441)); barn.position.set(0, 2.5, -38); scene.add(barn);
-  const roof = new THREE.Mesh(new THREE.BoxGeometry(31, 0.4, 10.5), lam(0x374151)); roof.position.set(0, 5.2, -38); scene.add(roof);
 }
 
 // ---------------------------------------------------------------- sky, clouds and grass
@@ -421,7 +412,7 @@ void main(){
     // denser near the arena fence, thinning outwards
     const x = (r3() - 0.5) * 2 * 95 * Math.pow(r3(), 0.35), z = (r3() - 0.5) * 2 * 75 * Math.pow(r3(), 0.35);
     if (Math.abs(x) < 38.6 && Math.abs(z) < 26.1) continue;
-    if (Math.abs(x) < 36 && z < -26 && z > -60) continue;
+    if ((x / 37.5) ** 2 + ((z + 44) / 20.5) ** 2 < 1) continue;
     e.set((r3() - 0.5) * 0.3, r3() * Math.PI, (r3() - 0.5) * 0.3); q.setFromEuler(e);
     const h = 0.35 + r3() * 0.55; pos.set(x, 0, z); scl.set(0.07 + r3() * 0.05, h, 1);
     m4.compose(pos, q, scl); grass.setMatrixAt(n++, m4);
@@ -1015,7 +1006,10 @@ function updateGuides() {
 // ---------------------------------------------------------------- stable yard hub
 const $ = id => document.getElementById(id);
 const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
-const yard = { people: [], heads: [], nets: [], led: null, glows: [], labels: [] };
+const YARD_C = V3(0, 0, -44), YARD_R = [36, 19];
+const inYard = (x, z, pad = 0) => ((x - YARD_C.x) / (YARD_R[0] + pad)) ** 2 + ((z - YARD_C.z) / (YARD_R[1] + pad)) ** 2 < 1;
+const yard = { people: [], heads: [], nets: [], led: null, picks: [], doors: {} };
+let ys = 21; const yr = () => (ys = (ys * 16807) % 2147483647) / 2147483647;
 function makePerson(col) {
   const g = new THREE.Group(), body = lam(col), skin = lam(0xe0b18f), legsM = lam(0x3f3a36);
   const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.55, 4, 10), body); torso.position.y = 1.2; g.add(torso);
@@ -1023,49 +1017,381 @@ function makePerson(col) {
   const legs = [-1, 1].map(sx => { const piv = new THREE.Group(); piv.position.set(sx * 0.1, 0.85, 0); const l = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.8, 0.12), legsM); l.position.y = -0.4; piv.add(l); g.add(piv); return piv; });
   addOutline(g, 0x2a1c12); scene.add(g); return { g, legs };
 }
+const wood = lam(0x8a6240), darkWood = lam(0x4a3426), shadowMat = lam(0x1a120c);
+function place(obj, x, z, rot = 0, y = 0) { obj.position.set(x, y, z); obj.rotation.y = rot; scene.add(obj); return obj; }
+function bush(r) { const g = new THREE.Group(), m = lam([0x4f8a35, 0x5f9c3c, 0x3f7a33][Math.floor(yr() * 3)]); for (let k = 0; k < 3; k++) { const b = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 10), m); const s = r * (0.7 + yr() * 0.5); b.scale.set(s, s * 0.8, s); b.position.set((yr() - 0.5) * r * 1.4, s * 0.6, (yr() - 0.5) * r); g.add(b); } return g; }
+function roundBale() { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 1.2, 16), lam(0xd9b45a)); m.rotation.z = Math.PI / 2; m.position.y = 0.75; const g = new THREE.Group(); g.add(m); return g; }
+function squareBale() { const g = new THREE.Group(), m = new THREE.Mesh(new THREE.BoxGeometry(1, 0.45, 0.5), lam(0xe0c070)); m.position.y = 0.225; g.add(m); return g; }
+function wheelbarrow() {
+  const g = new THREE.Group(), green = lam(0x2f7d4f);
+  const tub = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.3, 0.4, 4, 1, true), green); tub.rotation.y = Math.PI / 4; tub.scale.set(1, 1, 1.5); tub.position.y = 0.62; g.add(tub);
+  const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 14), lam(0x222222)); wheel.rotation.z = Math.PI / 2; wheel.position.set(0, 0.2, 0.75); g.add(wheel);
+  for (const sx of [-1, 1]) { const h = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 1.3), darkWood); h.position.set(sx * 0.28, 0.5, -0.35); h.rotation.x = -0.25; g.add(h); }
+  return g;
+}
+function fork() { const g = new THREE.Group(); const h = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.5, 6), wood); h.position.y = 0.95; g.add(h); const head = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.3, 0.05), lam(0x9ca3af)); head.position.y = 0.15; g.add(head); g.rotation.z = 0.2; return g; }
+function gableRoof(w, h, d, mat) { const s = new THREE.Shape(); s.moveTo(-w / 2, 0); s.lineTo(w / 2, 0); s.lineTo(0, h); s.lineTo(-w / 2, 0); const g = new THREE.ExtrudeGeometry(s, { depth: d, bevelEnabled: false }); g.translate(0, 0, -d / 2); return new THREE.Mesh(g, mat); }
+function labelSprite(text, w = 8, accent = '#ffe08a') {
+  const tag = new THREE.Sprite(new THREE.SpriteMaterial({ depthTest: false, sizeAttenuation: false, transparent: true, opacity: text ? 1 : 0, map: canvasTex(320, 80, (c, W, H) => { c.fillStyle = 'rgba(15,23,42,.8)'; c.beginPath(); c.roundRect(4, 4, W - 8, H - 8, 30); c.fill(); c.strokeStyle = accent; c.lineWidth = 4; c.stroke(); c.fillStyle = '#fff'; let fs = 34; c.font = `bold ${fs}px system-ui, sans-serif`; while (c.measureText(text || '').width > W - 44 && fs > 16) { fs -= 2; c.font = `bold ${fs}px system-ui, sans-serif`; } c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text || '', W / 2, H / 2 + 2); }) }));
+  const k = 0.17 * Math.min(1, Math.max(0.75, (text || '').length / 11)); tag.scale.set(k, k / 4, 1); tag.renderOrder = 10; scene.add(tag); return tag;
+}
+// a selectable thing: pulsing glow box + floating label; group = where it is shown ('yard', or a place id)
+function addPick(id, group, center, size, labelText, labelPos, labelW = 8) {
+  const glow = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.12, depthWrite: false }));
+  glow.position.copy(center); glow.visible = false; scene.add(glow);
+  const tag = labelSprite(labelText, labelW); tag.position.copy(labelPos); tag.visible = false;
+  const p = { id, group, glow, tag, baseY: labelPos.y }; glow.userData.pick = p; tag.userData.pick = p; yard.picks.push(p); return p;
+}
+function viewOf(target, from, dist, h) { const d = from.clone().sub(target).setY(0).normalize(); return { pos: target.clone().addScaledVector(d, dist).setY(target.y + h), look: target.clone() }; }
+
+// ---------- yard exterior
 {
-  // gravel yard
+  // irregular gravel yard
+  const shape = new THREE.Shape();
+  for (let i = 0; i <= 48; i++) { const a = (i / 48) * Math.PI * 2, n = 1 + Math.sin(a * 3 + 1) * 0.06 + Math.sin(a * 7) * 0.035; const x = Math.cos(a) * YARD_R[0] * n, z = Math.sin(a) * YARD_R[1] * n; i ? shape.lineTo(x, z) : shape.moveTo(x, z); }
   const gravel = canvasTex(128, 128, (x, w, h) => { x.fillStyle = '#cfc6b2'; x.fillRect(0, 0, w, h); for (let i = 0; i < 1400; i++) { x.fillStyle = Math.random() < 0.5 ? 'rgba(120,110,95,.25)' : 'rgba(255,250,235,.3)'; x.fillRect(Math.random() * w, Math.random() * h, 2, 2); } });
-  gravel.wrapS = gravel.wrapT = THREE.RepeatWrapping; gravel.repeat.set(14, 6);
-  const yp = new THREE.Mesh(new THREE.PlaneGeometry(72, 32), lam(0xffffff, { map: gravel })); yp.rotation.x = -Math.PI / 2; yp.position.set(0, 0.012, -43); scene.add(yp);
-  // stable fronts on the barn (barn front face at z = -33.5)
-  const doorMat = lam(0x4a3426), darkMat = lam(0x1a120c), coats = [0x7a5230, 0x2a2a2e, 0xa8643a, 0xd8cdb8, 0x5a3a22, 0x8c8c8c];
-  for (let i = 0; i < 6; i++) {
-    const x = -12.5 + i * 5;
-    const lower = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.3, 0.15), doorMat); lower.position.set(x, 0.65, -33.42); scene.add(lower);
-    const gap = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.2, 0.05), darkMat); gap.position.set(x, 1.9, -33.47); scene.add(gap);
-    const hg = new THREE.Group(), cm = lam(coats[i]);
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.22, 0.8, 8), cm); neck.rotation.x = 1.0; neck.position.set(0, 0, 0.25); hg.add(neck);
-    const hd = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.24, 0.58), cm); hd.position.set(0, -0.12, 0.72); hd.rotation.x = 0.7; hg.add(hd);
-    hg.position.set(x, 1.85, -33.6); addOutline(hg); scene.add(hg); yard.heads.push({ hg, ph: i * 1.7 });
-    if (i < 5) { const net = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 8), lam(0xd9b45a)); net.scale.y = 1.4; const piv = new THREE.Group(); piv.position.set(x + 2.5, 2.6, -33.2); net.position.y = -0.55; piv.add(net); scene.add(piv); yard.nets.push({ piv, ph: i }); }
-  }
-  // tack room and yard office
-  const building = (x, z, wall, roofCol, sign) => {
+  gravel.wrapS = gravel.wrapT = THREE.RepeatWrapping; gravel.repeat.set(0.12, 0.12);
+  const yp = new THREE.Mesh(new THREE.ShapeGeometry(shape, 48), lam(0xffffff, { map: gravel })); yp.rotation.x = Math.PI / 2; yp.position.set(YARD_C.x, 0.012, YARD_C.z); yp.material.side = THREE.DoubleSide; scene.add(yp);
+  // a curving path down to the arena
+  const pathPts = []; for (let i = 0; i <= 20; i++) { const u = i / 20; pathPts.push(new THREE.Vector2(-6 + Math.sin(u * 3) * 5, -30 + u * 4)); }
+  for (const p of pathPts) { const d = new THREE.Mesh(new THREE.CircleGeometry(1.6, 14), lam(0xffffff, { map: gravel })); d.rotation.x = -Math.PI / 2; d.position.set(p.x, 0.013, p.y); scene.add(d); }
+
+  // American-style barn: big gable, sliding doors facing the arena
+  const barn = new THREE.Group();
+  const walls = new THREE.Mesh(new THREE.BoxGeometry(14, 5, 24), lam(0xa65441)); walls.position.y = 2.5; barn.add(walls);
+  const roof = gableRoof(15.6, 4.2, 25, lam(0x3d4a45)); roof.position.y = 5; barn.add(roof);
+  const trimM = lam(0xf5efe2);
+  for (const sx of [-1, 1]) { const t = new THREE.Mesh(new THREE.BoxGeometry(0.25, 5, 0.25), trimM); t.position.set(sx * 7, 2.5, 12.05); barn.add(t); }
+  const gableFill = gableRoof(14, 4, 0.2, lam(0xa65441)); gableFill.position.set(0, 5, 12.0); barn.add(gableFill);
+  const hay = new THREE.Mesh(new THREE.BoxGeometry(2, 1.4, 0.1), darkWood); hay.position.set(0, 6.4, 12.15); barn.add(hay);
+  const cup = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.4, 1.6), trimM); cup.position.set(0, 9.6, 0); barn.add(cup);
+  const cupRoof = new THREE.Mesh(new THREE.ConeGeometry(1.4, 1.1, 4), lam(0x3d4a45)); cupRoof.rotation.y = Math.PI / 4; cupRoof.position.set(0, 10.85, 0); barn.add(cupRoof);
+  const opening = new THREE.Mesh(new THREE.BoxGeometry(5.6, 4, 0.1), shadowMat); opening.position.set(0, 2, 12.03); barn.add(opening);
+  const doorsB = [-1, 1].map(sx => { const d = new THREE.Group(); const p = new THREE.Mesh(new THREE.BoxGeometry(2.8, 4, 0.15), lam(0x8f3f30)); p.position.y = 2; d.add(p); for (const k of [-1, 1]) { const x = new THREE.Mesh(new THREE.BoxGeometry(0.14, 4.7, 0.05), trimM); x.rotation.z = k * 0.6; x.position.set(0, 2, 0.09); d.add(x); } d.position.set(sx * 1.4, 0, 12.12); barn.add(d); return { d, sx }; });
+  for (const sx of [-1, 1]) for (let i = 0; i < 3; i++) { const w = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1, 1.4), trimM); w.position.set(sx * 7.02, 3, -8 + i * 7); barn.add(w); }
+  place(barn, 2, -47, 0.06);
+  yard.doors.stable = { kind: 'slide', parts: doorsB, t: 0 };
+  yard.barn = barn;
+
+  // tack room and yard office, set at angles
+  const building = (x, z, rot, wall, roofCol, sign) => {
     const g = new THREE.Group();
     const w = new THREE.Mesh(new THREE.BoxGeometry(8, 3.5, 6), lam(wall)); w.position.y = 1.75; g.add(w);
-    const r = new THREE.Mesh(new THREE.ConeGeometry(5.9, 2.2, 4), lam(roofCol)); r.rotation.y = Math.PI / 4; r.scale.set(1, 1, 0.78); r.position.y = 4.6; g.add(r);
-    const d = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.2, 0.1), doorMat); d.position.set(0, 1.1, 3.02); g.add(d);
+    const r = gableRoof(9, 2.2, 7, lam(roofCol)); r.rotation.y = Math.PI / 2; r.position.y = 3.5; g.add(r);
+    const op = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.2, 0.05), shadowMat); op.position.set(0, 1.1, 3.0); g.add(op);
+    const hinge = new THREE.Group(); hinge.position.set(-0.65, 0, 3.06); const d = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.2, 0.08), darkWood); d.position.set(0.65, 1.1, 0); hinge.add(d); g.add(hinge);
     const sg = board(2.6, 0.6, canvasTex(256, 60, (c, W, H) => { c.fillStyle = '#f8f1dc'; c.fillRect(0, 0, W, H); c.fillStyle = '#3b2a1a'; c.font = 'bold 34px Georgia, serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(sign, W / 2, H / 2 + 2); }));
     sg.position.set(0, 2.85, 3.04); g.add(sg);
-    g.position.set(x, 0, z); scene.add(g); return g;
+    const tubM = lam(0x7c4a2a); for (const sx of [-1, 1]) { const tub = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.32, 0.5, 10), tubM); tub.position.set(sx * 1.6, 0.25, 3.5); g.add(tub); const fl = bush(0.35); fl.children.forEach(c => c.material = lam(sx > 0 ? 0xd96c8a : 0xe8b84a)); fl.position.set(sx * 1.6, 0.45, 3.5); g.add(fl); }
+    place(g, x, z, rot); return { g, hinge };
   };
-  building(-25, -42, 0xefe3c8, 0x3f6b4f, 'Tack room');
-  building(25, -42, 0xe6d3ad, 0x8a3b2e, 'Yard office');
-  // notice board
-  const nbG = new THREE.Group();
-  for (const sx of [-1, 1]) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, 0.14), doorMat); p.position.set(sx * 1.2, 1.2, 0); nbG.add(p); }
-  const cork = board(2.4, 1.4, canvasTex(240, 140, (c, W, H) => { c.fillStyle = '#b5844f'; c.fillRect(0, 0, W, H); const cols = ['#fef9c3', '#dbeafe', '#fce7f3', '#dcfce7', '#ffffff']; for (let i = 0; i < 7; i++) { c.save(); c.translate(20 + (i % 4) * 56 + Math.random() * 8, 18 + Math.floor(i / 4) * 64 + Math.random() * 8); c.rotate((Math.random() - 0.5) * 0.2); c.fillStyle = cols[i % 5]; c.fillRect(0, 0, 44, 50); c.fillStyle = '#9ca3af'; for (let l = 0; l < 5; l++) c.fillRect(5, 9 + l * 8, 34 - (l % 2) * 10, 2); c.fillStyle = '#dc2626'; c.beginPath(); c.arc(22, 4, 3, 0, 7); c.fill(); c.restore(); } }));
-  cork.position.set(0, 1.75, 0.08); nbG.add(cork);
-  const roofB = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.12, 0.5), lam(0x3f6b4f)); roofB.position.set(0, 2.5, 0.05); nbG.add(roofB);
-  nbG.position.set(-34, 0, -30.5); scene.add(nbG);
+  const tack = building(-22, -38, 0.35, 0xefe3c8, 0x3f6b4f, 'Tack room');
+  const office = building(24, -40, -0.28, 0xe6d3ad, 0x8a3b2e, 'Yard office');
+  yard.doors.tack = { kind: 'hinge', hinge: tack.hinge, t: 0 }; yard.doors.office = { kind: 'hinge', hinge: office.hinge, t: 0 };
+  yard.tackG = tack.g; yard.officeG = office.g;
+
+  // notice board with real flyers
+  const nb = new THREE.Group();
+  for (const sx of [-1, 1]) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, 0.14), darkWood); p.position.set(sx * 1.3, 1.2, 0); nb.add(p); }
+  const cork = board(2.6, 1.5, canvasTex(64, 40, (c, W, H) => { c.fillStyle = '#b5844f'; c.fillRect(0, 0, W, H); for (let i = 0; i < 200; i++) { c.fillStyle = 'rgba(90,60,30,.3)'; c.fillRect(Math.random() * W, Math.random() * H, 1, 1); } }));
+  cork.position.set(0, 1.75, 0.08); nb.add(cork);
+  const roofB = new THREE.Mesh(new THREE.BoxGeometry(3, 0.12, 0.55), lam(0x3f6b4f)); roofB.position.set(0, 2.6, 0.05); roofB.rotation.x = 0.15; nb.add(roofB);
+  place(nb, -30, -30, 0.3); yard.board = nb;
+
+  // clutter that breaks the grid
+  place(roundBale(), -9, -57, 0.4); place(roundBale(), -10.6, -56.2, 1.1); place(roundBale(), -9.8, -57.2, 0.2, 1.4);
+  for (let i = 0; i < 4; i++) place(squareBale(), 13 + (i % 2) * 1.05, -35.5 - Math.floor(i / 2) * 0.1, 0.25, Math.floor(i / 2) * 0.45);
+  const muck = new THREE.Mesh(new THREE.ConeGeometry(2.4, 1.6, 12), lam(0x5a4030)); place(muck, 30, -52, 0, 0.8);
+  const trough = new THREE.Mesh(new THREE.BoxGeometry(2, 0.6, 0.8), lam(0x7d8a8f)); place(trough, -12, -33, -0.2, 0.3);
+  place(wheelbarrow(), 27.5, -48.5, 2.4);
+  for (let i = 0; i < 18; i++) { const a = -0.4 + i * 0.2, b = bush(0.9 + yr() * 0.6); place(b, Math.cos(a + Math.PI) * 40 + (yr() - 0.5) * 2, -46 + Math.sin(a + Math.PI) * 22 + (yr() - 0.5) * 2, yr() * 6); }
+  for (let i = 0; i < 12; i++) { const a = -0.5 + i * 0.13, b = bush(0.8 + yr() * 0.5); place(b, Math.cos(a) * 40, -46 + Math.sin(a) * 22, yr() * 6); }
+  // paddock rails on a curve to the east
+  for (let i = 0; i < 14; i++) { const a = -0.9 + i * 0.12, x = 46 + Math.cos(a) * 12, z = -40 + Math.sin(a) * 18; const post = new THREE.Mesh(new THREE.BoxGeometry(0.15, 1.2, 0.15), wood); place(post, x, z, 0, 0.6); if (i) { const px = 46 + Math.cos(a - 0.12) * 12, pz = -40 + Math.sin(a - 0.12) * 18, len = Math.hypot(x - px, z - pz); for (const y of [0.5, 1.0]) { const r = new THREE.Mesh(new THREE.BoxGeometry(len, 0.08, 0.06), wood); place(r, (x + px) / 2, (z + pz) / 2, -Math.atan2(z - pz, x - px), y); } } }
+
   // people and a horse being led
-  yard.people.push({ ...makePerson(0x2f6f9f), path: [V3(-19, 0, -30.2), V3(17, 0, -30.2)], sp: 1.2, u: 0.1 });
-  yard.people.push({ ...makePerson(0x9f4f3a), path: [V3(-25, 0, -39.6), V3(-8, 0, -31.5)], sp: 1.1, u: 0.5 });
-  yard.people.push({ ...makePerson(0x4f7f3a), path: [V3(25, 0, -39.6), V3(8, 0, -31.2)], sp: 1.0, u: 0.8 });
-  yard.people.push({ ...makePerson(0x6a4f8f), path: [V3(-33, 0, -32.5), V3(-28, 0, -38)], sp: 0.7, u: 0.3 });
+  yard.people.push({ ...makePerson(0x2f6f9f), path: [V3(-6, 0, -31.2), V3(10, 0, -31.8)], sp: 1.2, u: 0.1 });
+  yard.people.push({ ...makePerson(0x9f4f3a), path: [V3(-20.5, 0, -34), V3(-8, 0, -30)], sp: 1.1, u: 0.5 });
+  yard.people.push({ ...makePerson(0x4f7f3a), path: [V3(22.8, 0, -36), V3(9, 0, -31)], sp: 1.0, u: 0.8 });
+  yard.people.push({ ...makePerson(0x6a4f8f), path: [V3(-27.5, 0, -31.5), V3(-17, 0, -33.5)], sp: 0.7, u: 0.3 });
   const led = makeHorse(0xb07a48, false); scene.add(led.root);
-  yard.led = { H: led, groom: makePerson(0xc2410c), path: [V3(-30, 0, -27.6), V3(30, 0, -27.6)], sp: 1.6, u: 0.2 };
+  yard.led = { H: led, groom: makePerson(0xc2410c), path: [V3(-24, 0, -27.6), V3(24, 0, -27.8)], sp: 1.6, u: 0.2 };
+}
+
+// ---------- interiors (built away from the yard; reached through a door and a fade)
+const BARN_IN = V3(1000, 0, 0), TACK_IN = V3(1100, 0, 0), OFFICE_IN = V3(1200, 0, 0);
+function room(origin, w, h, d, wallCol, floorCol) {
+  const g = new THREE.Group();
+  const shell = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), lam(wallCol, { side: THREE.BackSide })); shell.position.y = h / 2; g.add(shell);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(w, d), lam(floorCol)); floor.rotation.x = -Math.PI / 2; floor.position.y = 0.01; g.add(floor);
+  for (let i = 0; i < 4; i++) { const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), new THREE.MeshBasicMaterial({ color: 0xfff1c1 })); lamp.position.set(0, h - 0.4, -d / 2 + (i + 0.5) * d / 4); g.add(lamp); }
+  g.position.copy(origin); scene.add(g); return g;
+}
+const STALLS = [];
+{
+  // barn interior: aisle along z, stalls either side
+  const g = room(BARN_IN, 11, 6, 30, 0xb07a52, 0xa8a29a);
+  for (let k = 0; k < 7; k++) { const beam = new THREE.Mesh(new THREE.BoxGeometry(11, 0.3, 0.3), darkWood); beam.position.set(0, 5.4, -13 + k * 4.3); g.add(beam); }
+  const zs = [9, 4, -1, -6];
+  const bars = new THREE.CylinderGeometry(0.025, 0.025, 1.0, 6), barM = lam(0x2b2b2b);
+  for (const sx of [-1, 1]) for (const z of zs) {
+    // partitions
+    for (const dz of [-2.4, 2.4]) { const p = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.4, 0.12), wood); p.position.set(sx * 3.9, 0.7, z + dz); g.add(p); }
+    const front = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.15, 4.8), wood); front.position.set(sx * 2.2, 0.575, z); g.add(front);
+    for (let b = 0; b < 14; b++) { const bar = new THREE.Mesh(bars, barM); bar.position.set(sx * 2.2, 1.8, z - 2.3 + b * 0.355); if (Math.abs(b - 6.5) > 2) g.add(bar); }
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 4.8), barM); rail.position.set(sx * 2.2, 2.3, z); g.add(rail);
+    const name = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.3), new THREE.MeshBasicMaterial({ color: 0xf8f1dc })); name.position.set(sx * 2.14, 2.55, z); name.rotation.y = -sx * Math.PI / 2; g.add(name);
+    STALLS.push({ sx, z });
+  }
+  // occupants: the three rideable horses plus yard horses
+  const keys = Object.keys(HORSES), extra = [0xd8cdb8, 0x5a3a22, 0x8c8c8c, 0x3a2a1e, 0xc9a37a];
+  STALLS.forEach((s, i) => {
+    const key = keys[i], col = key ? HORSES[key].colour : extra[(i - keys.length) % extra.length];
+    const H = makeHorse(col, false); H.root.position.set(BARN_IN.x + s.sx * 3.9, 0, s.z); H.root.rotation.y = s.sx > 0 ? -Math.PI / 2 : Math.PI / 2; scene.add(H.root);
+    if (H.padMat) H.padMat.visible = false;
+    H.body.children.forEach(c => { if (c.geometry && c.geometry.type === 'BoxGeometry' && c.position.y > 0.3 && Math.abs(c.position.z) < 0.1) c.visible = false; });
+    s.H = H; s.key = key; s.ph = i * 1.3;
+    const w = V3(BARN_IN.x + s.sx * 4.3, 1.6, s.z);
+    if (key) addPick('horse:' + key, 'stable', w.clone().setY(1.4), V3(3, 2.6, 3.6), HORSES[key].name, V3(BARN_IN.x + s.sx * 2.4, 3.1, s.z), 3.2);
+  });
+}
+{
+  // tack room interior
+  const g = room(TACK_IN, 8, 3.2, 7, 0xd9c8a6, 0x8f6a48);
+  const T = TACK_IN;
+  // saddle rack on the back wall
+  for (let i = 0; i < 3; i++) {
+    const br = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.5), darkWood); br.position.set(-1.6 + i * 1.4, 1.3, -3.25); g.add(br);
+    const sd = new THREE.Mesh(new THREE.CapsuleGeometry(0.22, 0.35, 4, 10), lam([0x5a3417, 0x3b2414, 0x6e4422][i])); sd.rotation.x = Math.PI / 2; sd.scale.set(1.3, 1, 0.7); sd.position.set(-1.6 + i * 1.4, 1.5, -3.15); g.add(sd);
+  }
+  addPick('saddles', 'tack', V3(T.x, 1.5, -3.1), V3(4.4, 1, 0.9), 'Saddle rack', V3(T.x, 2.35, -3.0), 3.4);
+  // helmet rack on the left wall
+  KIT.helmet.opts.forEach(([, col], i) => { const peg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.2, 6), darkWood); peg.rotation.z = Math.PI / 2; peg.position.set(-3.9, 1.6, -1.2 + i * 0.75); g.add(peg); const hm = new THREE.Mesh(new THREE.SphereGeometry(0.17, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), lam(col)); hm.position.set(-3.75, 1.55, -1.2 + i * 0.75); g.add(hm); });
+  addPick('helmet', 'tack', V3(T.x - 3.7, 1.6, -0.1), V3(0.7, 0.8, 3.4), 'Helmets', V3(T.x - 3.2, 2.4, -0.1), 2.8);
+  // jacket rail on the right wall
+  const railJ = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 3.4, 6), barM()); railJ.rotation.x = Math.PI / 2; railJ.position.set(3.6, 2.1, 0); g.add(railJ);
+  KIT.jacket.opts.forEach(([, col], i) => { const j = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.75, 0.5), lam(col)); j.position.set(3.6, 1.65, -1.3 + i * 0.65); g.add(j); });
+  addPick('jacket', 'tack', V3(T.x + 3.6, 1.7, 0), V3(0.7, 1.2, 3.6), 'Jackets', V3(T.x + 3.1, 2.65, 0), 2.8);
+  // saddle pad stack on a table
+  const table = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 0.8), wood); table.position.set(2.2, 0.4, -2.6); g.add(table);
+  KIT.pad.opts.forEach(([, col], i) => { const p = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.07, 0.6), lam(col)); p.position.set(2.2, 0.84 + i * 0.075, -2.6); p.rotation.y = (yr() - 0.5) * 0.25; g.add(p); });
+  addPick('pad', 'tack', V3(T.x + 2.2, 1.0, -2.6), V3(1.2, 0.6, 0.9), 'Saddle pads', V3(T.x + 2.2, 1.75, -2.4), 3);
+}
+function barM() { return lam(0x2b2b2b); }
+{
+  // yard office interior
+  const g = room(OFFICE_IN, 8, 3.2, 7, 0xe3d2ae, 0x7d6a55);
+  const O = OFFICE_IN;
+  const desk = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.8, 0.8), wood); desk.position.set(0, 0.4, -2.8); g.add(desk);
+  const ledger = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.35), lam(0x7a1f1f)); ledger.position.set(-0.3, 0.83, -2.7); g.add(ledger);
+  const jb = board(1.6, 1, canvasTex(160, 100, (c, W, H) => { c.fillStyle = '#e8dcc0'; c.fillRect(0, 0, W, H); c.fillStyle = '#3b2a1a'; c.font = 'bold 15px sans-serif'; c.fillText('JOBS TODAY', 10, 18); c.font = '13px sans-serif'; ['Muck out 3 stables', 'Groom Barney', 'Fill hay nets', 'Clean tack'].forEach((t, i) => c.fillText('□ ' + t, 10, 40 + i * 16)); }));
+  jb.position.set(0, 1.9, -3.45); g.add(jb);
+  addPick('desk', 'office', V3(O.x, 1.2, -3), V3(2, 2.2, 1), 'Desk and jobs', V3(O.x, 2.7, -2.8), 3.4);
+  const wb = wheelbarrow(); wb.position.set(-2.6, 0, -0.6); wb.rotation.y = 0.6; g.add(wb);
+  const fk = fork(); fk.position.set(-3.6, 0, -1.8); g.add(fk);
+  addPick('muck', 'office', V3(O.x - 2.8, 0.7, -1), V3(2, 1.5, 2.4), 'Mucking out', V3(O.x - 2.6, 1.9, -0.8), 3.2);
+  for (let i = 0; i < 3; i++) { const b = squareBale(); b.position.set(2.7, i * 0.45, -1.2 + (i % 2) * 0.1); b.rotation.y = 1.5; g.add(b); }
+  addPick('hay', 'office', V3(O.x + 2.7, 0.7, -1.2), V3(1, 1.5, 1.5), 'Feeding and hay nets', V3(O.x + 2.5, 1.85, -1.0), 3.8);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.35, 0.4), lam(0x2f6f9f)); box.position.set(2.6, 0.18, 1.4); g.add(box);
+  for (let i = 0; i < 3; i++) { const br = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.08, 0.1), lam([0xd9b45a, 0x7a5230, 0x111111][i])); br.position.set(2.45 + i * 0.15, 0.4, 1.4); g.add(br); }
+  addPick('groom', 'office', V3(O.x + 2.6, 0.3, 1.4), V3(0.9, 0.7, 0.7), 'Grooming kit', V3(O.x + 2.4, 1.1, 1.5), 3);
+}
+// menage stations and the course
+const STATIONS = {
+  balance: { name: 'Balance', based: 'Lunge lessons', tiers: ['Tilt towards a direction (4, then 8 compass points)', 'Hold the dot in a large zone', 'The zone shrinks', 'The zone moves like a turn', 'Wobbles, spooks and recovery'] },
+  seat: { name: 'Jump position', based: 'Grid work', tiers: ['Fold when prompted', 'Fold at take-off without a prompt', 'Sit back on landing', 'A grid of several fences', 'Bounces'] },
+  takeoff: { name: 'Take-off timing', based: 'Poles and rhythm', tiers: ['Tap on the beat', 'Tap on the third hoofbeat', 'Ground poles counted down 3, 2, 1', 'A single fence with stride guides', 'The same fence without guides'] },
+  pace: { name: 'Pace', based: 'Lines', tiers: ['Lengthen and shorten between markers', 'One distance in 4 strides', 'The same distance in 5 strides'] },
+  leads: { name: 'Leads', based: 'Figure of eight', tiers: ['Canter circles on the correct lead', 'Flying changes across the diagonal', 'Land on the right lead on a change of direction'] },
+};
+{
+  const ringM = lam(0xbfa77e), pole = new THREE.CylinderGeometry(0.05, 0.05, 3, 8); pole.rotateZ(Math.PI / 2);
+  const whiteRed = lam(0xf5f5f4), cone = new THREE.ConeGeometry(0.18, 0.45, 10), coneM = lam(0xf97316);
+  const ring = (x, z, r) => { const m = new THREE.Mesh(new THREE.RingGeometry(r - 0.15, r + 0.15, 40), ringM); m.rotation.x = -Math.PI / 2; m.position.set(x, 0.025, z); scene.add(m); };
+  ring(-31, -20.5, 3.5); { const c = new THREE.Mesh(cone, coneM); c.position.set(-31, 0.22, -20.5); scene.add(c); }
+  addPick('st:balance', 'menage', V3(-31, 0.5, -20.5), V3(8, 1, 8), 'Balance', V3(-31, 3, -20.5), 5);
+  for (let i = 0; i < 3; i++) for (const k of [-1, 1]) { const p = new THREE.Mesh(pole, whiteRed); p.position.set(-22 + i * 3.6, 0.35, 21.5); p.rotation.y = Math.PI / 2; p.rotation.z = k * 0.25; scene.add(p); }
+  addPick('st:seat', 'menage', V3(-18.4, 0.5, 21.5), V3(10, 1, 4), 'Jump position', V3(-18.4, 3, 21.5), 6);
+  for (let i = 0; i < 4; i++) { const p = new THREE.Mesh(pole, whiteRed); p.position.set(-4 + i * 3.2, 0.06, 21.5); p.rotation.y = Math.PI / 2; scene.add(p); }
+  addPick('st:takeoff', 'menage', V3(1, 0.5, 21.5), V3(12, 1, 4), 'Take-off timing', V3(1, 3, 21.5), 6.5);
+  for (const [x, z] of [[15, 20], [15, 23], [29, 20], [29, 23]]) { const c = new THREE.Mesh(cone, coneM); c.position.set(x, 0.22, z); scene.add(c); }
+  addPick('st:pace', 'menage', V3(22, 0.5, 21.5), V3(16, 1, 5), 'Pace', V3(22, 3, 21.5), 4);
+  ring(27, -20, 3); ring(33.2, -20, 3);
+  addPick('st:leads', 'menage', V3(30, 0.5, -20), V3(13, 1, 7), 'Leads', V3(30, 3, -20), 4);
+  addPick('course', 'menage', V3(0, 0.6, 0), V3(30, 1.2, 14), 'The course', V3(0, 3.5, 0), 6);
+}
+// flyers on the notice board
+const EVENTS = [
+  { id: 'clear', name: 'Saturday Clear Round', info: '7 fences, 1.00 to 1.20 m. Your own assist settings.', ov: null, col: '#fef3c7', ink: '#92400e' },
+  { id: 'five', name: 'Five-Star Jump Position', info: 'Limited event. Jump position assist off: fold and sit back yourself.', ov: { seat: false }, col: '#dbeafe', ink: '#1e3a8a' },
+  { id: 'nohands', name: 'No Hands Up', info: 'Limited event. Jump position and take-off timing assists off.', ov: { seat: false, takeoff: false }, col: '#fce7f3', ink: '#9d174d' },
+  { id: 'qual', name: 'Novice Qualifier', info: 'Needs Take-off timing lesson tier 3. Lessons are not built yet.', locked: true, col: '#dcfce7', ink: '#166534' },
+];
+EVENTS.forEach((e, i) => {
+  const fl = board(0.55, 0.7, canvasTex(110, 140, (c, W, H) => { c.fillStyle = e.col; c.fillRect(0, 0, W, H); c.fillStyle = e.ink; c.font = 'bold 15px Georgia, serif'; const words = e.name.split(' '); words.forEach((w, k) => c.fillText(w, 8, 26 + k * 18)); c.fillStyle = '#6b7280'; for (let l = 0; l < 4; l++) c.fillRect(8, 90 + l * 9, 90 - (l % 2) * 25, 3); if (e.locked) { c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(0, 0, W, H); c.fillStyle = '#fff'; c.font = 'bold 16px sans-serif'; c.fillText('LOCKED', 22, 80); } c.fillStyle = '#dc2626'; c.beginPath(); c.arc(W / 2, 7, 4, 0, 7); c.fill(); }));
+  fl.position.set(-0.93 + i * 0.62, 1.78 + (i % 2 ? -0.06 : 0.05), 0.11); fl.rotation.z = (i % 2 ? 0.05 : -0.04); yard.board.add(fl);
+  e.mesh = fl;
+});
+yard.board.updateMatrixWorld(true);
+EVENTS.forEach((e, i) => { const w = e.mesh.getWorldPosition(V3(0, 0, 0)); addPick('ev:' + e.id, 'board', w, V3(0.6, 0.75, 0.2), null, w.clone(), 1.3); });
+
+// places on the overhead view
+yard.barn.updateMatrixWorld(true); yard.tackG.updateMatrixWorld(true); yard.officeG.updateMatrixWorld(true);
+const fwdOf = o => V3(Math.sin(o.rotation.y), 0, Math.cos(o.rotation.y));
+const doorView = (o, local, dist) => { const d = o.localToWorld(local.clone()); return { pos: d.clone().addScaledVector(fwdOf(o), dist).setY(2.4), look: d.clone().setY(1.6) }; };
+const PLACES = {
+  menage: { label: 'Menage', view: { pos: V3(0, 22, 46), look: V3(0, 0, 4) }, hint: 'Tap a lesson station or the course' },
+  stable: { label: 'Stable block', door: doorView(yard.barn, V3(0, 2, 12.1), 9), entry: { pos: V3(BARN_IN.x, 1.8, 13.5), look: V3(BARN_IN.x, 1.3, -8) }, hint: 'Tap a horse' },
+  tack: { label: 'Tack room', door: doorView(yard.tackG, V3(0, 1.2, 3.06), 5.5), entry: { pos: V3(TACK_IN.x, 1.7, 3.1), look: V3(TACK_IN.x, 1.2, -3) }, hint: 'Tap a rack' },
+  office: { label: 'Yard office', door: doorView(yard.officeG, V3(0, 1.2, 3.06), 5.5), entry: { pos: V3(OFFICE_IN.x, 1.7, 3.1), look: V3(OFFICE_IN.x, 1.1, -3) }, hint: 'Tap something to do' },
+  board: { label: 'Notice board', view: (() => { const c = yard.board.localToWorld(V3(0, 1.75, 0)); return { pos: c.clone().addScaledVector(fwdOf(yard.board), 3.2).setY(1.85), look: c }; })(), hint: 'Tap a flyer' },
+};
+addPick('place:menage', 'yard', V3(0, 0.15, 0), V3(76, 0.3, 51), 'Menage', V3(-4, 5, -4));
+addPick('place:stable', 'yard', V3(2, 4.5, -47), V3(15, 9, 25), 'Stable block', V3(2, 13, -47));
+addPick('place:tack', 'yard', V3(-22, 2.4, -38), V3(9, 5, 7.5), 'Tack room', V3(-22, 8, -38));
+addPick('place:office', 'yard', V3(24, 2.4, -40), V3(9, 5, 7.5), 'Yard office', V3(24, 8, -40));
+addPick('place:board', 'yard', V3(-30, 1.3, -30), V3(3.4, 2.8, 1.2), 'Notice board', V3(-30, 4.6, -30));
+for (const [g, id] of [[yard.tackG, 'tack'], [yard.officeG, 'office']]) { const p = yard.picks.find(q => q.id === 'place:' + id); p.glow.rotation.y = g.rotation.y; }
+yard.picks.find(q => q.id === 'place:stable').glow.rotation.y = yard.barn.rotation.y;
+yard.picks.find(q => q.id === 'place:board').glow.rotation.y = yard.board.rotation.y;
+
+// ---------- hub navigation: overhead -> place -> item, with a back arrow
+const HUB_OVER = { pos: V3(34, 36, 16), look: V3(-3, 0, -31) };
+const hub = { state: 'splash', t: 0, from: null, to: null, next: null, after: null, loc: null, item: null, mode: 'career', orbit: 0, inside: false };
+function moveCam(to, next, after, dur = 1.2) { hub.from = { pos: camera.position.clone(), look: camLook.clone() }; hub.to = to; hub.t = 0; hub.dur = dur; hub.state = 'moving'; hub.next = next; hub.after = after; }
+function fade(on, cb) { const f = $('fade'); f.style.opacity = on ? 1 : 0; setTimeout(() => cb && cb(), 380); }
+function creak() {
+  if (!actx || !settings.sound) return;
+  const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain(), bp = actx.createBiquadFilter(), lfo = actx.createOscillator(), lg = actx.createGain();
+  o.type = 'sawtooth'; o.frequency.setValueAtTime(70, t); o.frequency.linearRampToValueAtTime(115, t + 0.5); o.frequency.linearRampToValueAtTime(85, t + 0.85);
+  lfo.frequency.value = 23; lg.gain.value = 18; lfo.connect(lg).connect(o.frequency);
+  bp.type = 'bandpass'; bp.frequency.value = 1100; bp.Q.value = 6;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.08); g.gain.setValueAtTime(0.18, t + 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+  o.connect(bp).connect(g).connect(actx.destination); o.start(t); lfo.start(t); o.stop(t + 0.95); lfo.stop(t + 0.95);
+}
+function animDoor(id, open, cb) {
+  const d = yard.doors[id]; if (!d) return cb && cb();
+  if (open) creak();
+  const t0 = performance.now(), from = d.t, to = open ? 1 : 0;
+  const tick = () => {
+    const k = Math.min(1, (performance.now() - t0) / 750), e = k * k * (3 - 2 * k); d.t = from + (to - from) * e;
+    if (d.kind === 'slide') d.parts.forEach(p => p.d.position.x = p.sx * (1.4 + d.t * 2.7)); else d.hinge.rotation.y = -d.t * 1.7;
+    if (k < 1) requestAnimationFrame(tick); else { if (!open) thud(false); cb && cb(); }
+  };
+  tick();
+}
+function chrome() {
+  const s = hub.state, paused = s === 'riding';
+  $('navBack').style.display = (s === 'place' || s === 'item' || (paused && !$('menu').classList.contains('hidden'))) ? 'block' : 'none';
+  $('hubHome').style.display = s === 'overhead' ? 'block' : 'none';
+  const hint = s === 'overhead' ? 'Tap a place in the yard' : s === 'place' ? PLACES[hub.loc].hint : '';
+  $('hubHint').style.display = hint ? 'block' : 'none';
+  $('hubHint').innerHTML = `<span>${hub.mode === 'career' ? 'Career' : 'Practice'}</span> · ${hint}`;
+}
+function hidePanels() { for (const id of ['menu', 'itemPanel', 'results']) $(id).classList.add('hidden'); }
+function abortRide() { running = false; paused = true; setHudVisible(false); st.mode = ''; reattachRider(); rideOverride = null; rideEvent = null; }
+function goOverhead() {
+  hidePanels();
+  if (hub.state === 'riding' || running) abortRide();
+  const rise = () => moveCam(HUB_OVER, 'overhead', chrome, 1.3);
+  if (hub.inside) leaveInterior(rise); else rise();
+}
+function leaveInterior(cb) {
+  const id = hub.inside; hub.state = 'moving';
+  fade(true, () => { const dv = PLACES[id].door; camera.position.copy(dv.pos); camLook.copy(dv.look); camera.lookAt(camLook); hub.inside = false; fade(false, () => animDoor(id, false, cb)); });
+}
+function goPlace(id) {
+  const P = PLACES[id]; hub.loc = id; hub.item = null; hub.state = 'moving'; chrome();
+  if (P.door) moveCam(P.door, 'moving', () => animDoor(id, true, () => fade(true, () => { camera.position.copy(P.entry.pos); camLook.copy(P.entry.look); camera.lookAt(camLook); hub.inside = id; hub.state = 'place'; fade(false); chrome(); })), 1.2);
+  else moveCam(P.view, 'place', chrome, 1.2);
+}
+function placeView() { const P = PLACES[hub.loc]; return P.entry || P.view; }
+function goItem(pick) {
+  hub.item = pick.id; const c = pick.glow.position, from = camera.position;
+  let to;
+  if (pick.id.startsWith('horse:')) { const s = STALLS.find(q => q.key === pick.id.slice(6)); to = { pos: V3(BARN_IN.x - s.sx * 1.6, 2.7, s.z + 0.6), look: V3(BARN_IN.x + s.sx * 3.6, 1.5, s.z) }; }
+  else if (pick.id.startsWith('ev:')) to = { pos: c.clone().addScaledVector(fwdOf(yard.board), 0.9).setY(c.y + 0.05), look: c.clone() };
+  else if (pick.group === 'menage') to = pick.id === 'course' ? { pos: V3(-34, 10, 26), look: V3(0, 0, 0) } : viewOf(c, V3(c.x * 0.4, 0, c.z * 0.4), 9, 5);
+  else to = viewOf(c, from, 2.6, 0.5);
+  // keep the object in the left part of the screen, clear of the panel on the right
+  const dir = to.look.clone().sub(to.pos).setY(0).normalize(), right = V3(-dir.z, 0, dir.x), dist = to.look.distanceTo(to.pos);
+  to.look = to.look.clone().addScaledVector(right, dist * 0.38);
+  moveCam(to, 'item', () => { openItem(pick.id); chrome(); }, 0.95);
+}
+function back() {
+  const s = hub.state;
+  if (s === 'item') { hidePanels(); moveCam(placeView(), 'place', chrome, 0.9); }
+  else if (s === 'place') goOverhead();
+  else if (s === 'riding') goOverhead();
+}
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+canvas.addEventListener('pointerdown', e => {
+  const s = hub.state; if (s !== 'overhead' && s !== 'place') return;
+  const grp = s === 'overhead' ? 'yard' : hub.loc;
+  ndc.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const objs = yard.picks.filter(p => p.group === grp).flatMap(p => [p.tag, p.glow]);
+  objs.forEach(o => o.visible = true);
+  const hit = ray.intersectObjects(objs, false)[0];
+  if (!hit) return; const p = hit.object.userData.pick;
+  initAudio();
+  if (p.id.startsWith('place:')) goPlace(p.id.slice(6)); else goItem(p);
+});
+function hubCamera(dt) {
+  const t = performance.now() / 1000, s = hub.state, grp = s === 'overhead' ? 'yard' : s === 'place' ? hub.loc : null;
+  yard.picks.forEach((p, i) => { const on = p.group === grp; p.glow.visible = on; p.tag.visible = on; if (on) { p.glow.material.opacity = 0.06 + 0.1 * (0.5 + 0.5 * Math.sin(t * 2.4 + i)); p.tag.position.y = p.baseY + Math.sin(t * 1.6 + i) * (p.group === 'yard' ? 0.25 : 0.05); } });
+  if (s === 'splash') {
+    hub.orbit += dt * 0.05;
+    camera.position.set(Math.cos(hub.orbit) * 52, 22 + Math.sin(hub.orbit * 1.7) * 3, -38 + Math.sin(hub.orbit) * 40);
+    camLook.set(0, 1, -38);
+  } else if (s === 'moving' && hub.to) {
+    hub.t = Math.min(1, hub.t + dt / hub.dur); const e = hub.t < 0.5 ? 4 * hub.t ** 3 : 1 - (-2 * hub.t + 2) ** 3 / 2;
+    camera.position.lerpVectors(hub.from.pos, hub.to.pos, e); camLook.lerpVectors(hub.from.look, hub.to.look, e);
+    if (hub.t >= 1) { hub.to = null; hub.state = hub.next; const a = hub.after; hub.after = null; a && a(); }
+  }
+  camera.lookAt(camLook);
+}
+function swatchRow(key) {
+  const def = KIT[key], row = document.createElement('div'); row.className = 'swatches'; settings.kit = settings.kit || { jacket: 0, pad: 0, helmet: 0 };
+  def.opts.forEach(([name, col], i) => { const b = document.createElement('button'); b.className = 'sw' + ((settings.kit[key] || 0) === i ? ' sel' : ''); b.title = name; b.setAttribute('aria-label', name); b.style.background = '#' + col.toString(16).padStart(6, '0'); b.onclick = () => { settings.kit[key] = i; saveSettings(); applyKit(); openItem(hub.item); }; row.appendChild(b); });
+  return row;
+}
+function openItem(id) {
+  if (id === 'course') { renderMenu(); $('menu').classList.remove('hidden'); return; }
+  const title = $('itemTitle'), body = $('itemBody'); body.innerHTML = '';
+  const p = (html, cls = 'sub') => { const e = document.createElement('p'); e.className = cls; e.innerHTML = html; body.appendChild(e); return e; };
+  const btn = (text, fn, primary) => { const b = document.createElement('button'); b.className = primary ? 'primary' : 'plain'; b.textContent = text; b.onclick = fn; body.appendChild(b); return b; };
+  if (id.startsWith('horse:')) {
+    const k = id.slice(6), h = HORSES[k]; title.textContent = h.name; p(h.desc);
+    let best = null; try { best = JSON.parse(localStorage.getItem('cr-best-' + k) || 'null'); } catch (e) {}
+    p(`Scope ${Math.round(h.scope * 100)} · Boldness ${Math.round(h.bold * 100)} · Carefulness ${Math.round(h.care * 100)}` + (best ? `<br>Your best: ${best.total} faults, ${best.time.toFixed(2)} s` : ''), 'hint');
+    if (settings.horse === k) p('<b>Your current ride.</b>');
+    else btn('Ride ' + h.name, () => { settings.horse = k; saveSettings(); swapHorse(); openItem(id); }, true);
+  } else if (id === 'saddles') { title.textContent = 'Saddle rack'; p('Saddles with real effects will live here: a deep-seat saddle or knee rolls widen your balance tolerance.'); p('Not built yet.', 'hint'); }
+  else if (['jacket', 'helmet', 'pad'].includes(id)) { title.textContent = KIT[id].label + (id === 'pad' ? 's' : 's'); p('Choose a colour. It changes on your rider and horse straight away.'); body.appendChild(swatchRow(id)); }
+  else if (id.startsWith('st:')) {
+    const S = STATIONS[id.slice(3)]; title.textContent = S.name + ' lesson'; p(`Based on ${S.based.toLowerCase()}. Each tier tightens the precision; passing a tier opens the next.`);
+    const ol = document.createElement('ol'); S.tiers.forEach(t => { const li = document.createElement('li'); li.textContent = t; ol.appendChild(li); }); body.appendChild(ol);
+    p('Lessons are not built yet. Free practice is on the course.', 'hint');
+  } else if (id.startsWith('ev:')) {
+    const e = EVENTS.find(x => 'ev:' + x.id === id); title.textContent = e.name; p(e.info);
+    if (e.locked) p('Locked.', 'hint'); else btn('Enter', () => { rideOverride = e.ov; rideEvent = e.name; startRide(); }, true);
+  } else {
+    const jobs = { desk: ['Desk and jobs', hub.mode === 'career' ? 'Balance: <b>£0</b>. Today\'s jobs are pinned above the desk; their pay will fund lessons.' : 'Practice mode: everything is open and no money is needed.'], muck: ['Mucking out', 'Muck out stables with the fork and wheelbarrow to earn your first wages.'], hay: ['Feeding and hay nets', 'Weigh and fill hay nets, then feed in the right order.'], groom: ['Grooming', 'Brush, pick out feet and tidy manes and tails.'] }[id];
+    title.textContent = jobs[0]; p(jobs[1]); if (id !== 'desk' || hub.mode === 'career') p('Stable jobs are not built yet.', 'hint');
+  }
+  $('itemPanel').classList.remove('hidden');
+}
+function animateYard(dt) {
+  const t = performance.now() / 1000;
+  for (const p of yard.people) { const { pos, yaw } = walkAlong(p, dt); p.g.position.copy(pos); p.g.position.y = Math.abs(Math.sin(t * 5 + p.u)) * 0.04; p.g.rotation.y = yaw; p.legs[0].rotation.x = Math.sin(t * 5 + p.u * 3) * 0.5; p.legs[1].rotation.x = -p.legs[0].rotation.x; }
+  const L = yard.led; if (L) {
+    const { pos, yaw } = walkAlong(L, dt);
+    L.H.root.position.copy(pos); L.H.root.rotation.y = yaw; L.H.body.position.y = 1.25 + Math.abs(Math.sin(t * 3.2)) * 0.03; legPose(L.H.legs, (t * 0.9) % 1, null);
+    const fwd = V3(Math.sin(yaw), 0, Math.cos(yaw)), left = V3(fwd.z, 0, -fwd.x);
+    L.groom.g.position.copy(pos).addScaledVector(left, 0.9).addScaledVector(fwd, 0.8); L.groom.g.rotation.y = yaw; L.groom.legs[0].rotation.x = Math.sin(t * 5) * 0.5; L.groom.legs[1].rotation.x = -L.groom.legs[0].rotation.x;
+  }
+  for (const s of STALLS) { s.H.neckPivot.rotation.x = 0.25 + Math.sin(t * 0.7 + s.ph) * 0.12; s.H.neckPivot.rotation.y = Math.sin(t * 0.4 + s.ph) * 0.3; }
 }
 function walkAlong(o, dt) {
   const [a, b] = o.path, len = a.distanceTo(b);
@@ -1073,106 +1399,8 @@ function walkAlong(o, dt) {
   const pos = a.clone().lerp(b, f), dir = (k < 1 ? b.clone().sub(a) : a.clone().sub(b)).normalize();
   return { pos, yaw: Math.atan2(dir.x, dir.z) };
 }
-function animateYard(dt) {
-  const t = performance.now() / 1000;
-  for (const p of yard.people) {
-    const { pos, yaw } = walkAlong(p, dt); p.g.position.copy(pos); p.g.position.y = Math.abs(Math.sin(t * 5 + p.u)) * 0.04; p.g.rotation.y = yaw;
-    p.legs[0].rotation.x = Math.sin(t * 5 + p.u * 3) * 0.5; p.legs[1].rotation.x = -p.legs[0].rotation.x;
-  }
-  const L = yard.led; if (L) {
-    const { pos, yaw } = walkAlong(L, dt);
-    L.H.root.position.copy(pos); L.H.root.rotation.y = yaw; L.H.body.position.y = 1.25 + Math.abs(Math.sin(t * 3.2)) * 0.03;
-    legPose(L.H.legs, (t * 0.9) % 1, null);
-    const fwd = V3(Math.sin(yaw), 0, Math.cos(yaw)), left = V3(fwd.z, 0, -fwd.x);
-    L.groom.g.position.copy(pos).addScaledVector(left, 0.9).addScaledVector(fwd, 0.8); L.groom.g.rotation.y = yaw;
-    L.groom.legs[0].rotation.x = Math.sin(t * 5) * 0.5; L.groom.legs[1].rotation.x = -L.groom.legs[0].rotation.x;
-  }
-  for (const h of yard.heads) { h.hg.rotation.x = Math.sin(t * 0.8 + h.ph) * 0.12; h.hg.rotation.y = Math.sin(t * 0.5 + h.ph * 2) * 0.35; }
-  for (const n of yard.nets) n.piv.rotation.z = Math.sin(t * 1.3 + n.ph) * 0.06;
-}
-
-// selectable places: soft pulsing glow, a floating label and a camera target to dive into
-const LOCS = {
-  menage: { label: 'Menage', box: [V3(0, 0.15, 0), V3(76, 0.3, 51)], lab: V3(0, 5, -10), dive: { pos: V3(-34, 10, 26), look: V3(0, 0, 0) }, panel: 'menu' },
-  stable: { label: 'Stable block', box: [V3(0, 2.6, -38), V3(30.8, 5.6, 9.8)], lab: V3(0, 8.5, -38), dive: { pos: V3(0, 3.4, -23.5), look: V3(0, 2, -34) }, panel: 'stablePanel' },
-  tack: { label: 'Tack room', box: [V3(-25, 2.2, -42), V3(8.8, 5, 6.8)], lab: V3(-25, 8, -42), dive: { pos: V3(-25, 3, -30), look: V3(-25, 2, -39) }, panel: 'tackPanel' },
-  board: { label: 'Notice board', box: [V3(-34, 1.3, -30.5), V3(3.2, 2.8, 0.8)], lab: V3(-34, 4.4, -30.5), dive: { pos: V3(-34, 1.9, -25.6), look: V3(-34, 1.7, -30.5) }, panel: 'boardPanel' },
-  office: { label: 'Yard office', box: [V3(25, 2.2, -42), V3(8.8, 5, 6.8)], lab: V3(25, 8, -42), dive: { pos: V3(25, 3, -30), look: V3(25, 2, -39) }, panel: 'officePanel' },
-};
-for (const [id, L] of Object.entries(LOCS)) {
-  const glow = new THREE.Mesh(new THREE.BoxGeometry(...L.box[1].toArray()), new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.15, depthWrite: false }));
-  glow.position.copy(L.box[0]); glow.userData.loc = id; glow.visible = false; scene.add(glow); yard.glows.push(glow);
-  const tag = new THREE.Sprite(new THREE.SpriteMaterial({ depthTest: false, map: canvasTex(320, 80, (c, W, H) => { c.fillStyle = 'rgba(15,23,42,.78)'; c.beginPath(); c.roundRect(4, 4, W - 8, H - 8, 30); c.fill(); c.strokeStyle = '#ffe08a'; c.lineWidth = 4; c.stroke(); c.fillStyle = '#fff'; c.font = 'bold 36px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.label, W / 2, H / 2 + 2); }) }));
-  tag.scale.set(8, 2, 1); tag.position.copy(L.lab); tag.visible = false; tag.renderOrder = 10; tag.userData.loc = id; scene.add(tag); yard.labels.push(tag);
-}
-const HUB_OVER = { pos: V3(0, 44, 4), look: V3(0, 0, -28) };
-const hub = { state: 'splash', t: 0, from: null, to: null, next: null, after: null, loc: null, mode: 'career', orbit: 0 };
-function moveCam(to, next, after, dur = 1.2) { hub.from = { pos: camera.position.clone(), look: camLook.clone() }; hub.to = to; hub.t = 0; hub.dur = dur; hub.state = 'moving'; hub.next = next; hub.after = after; }
-function showHubChrome(v) { $('hubHint').style.display = v ? 'block' : 'none'; $('hubHome').style.display = v ? 'block' : 'none'; $('hubMode').textContent = hub.mode === 'career' ? 'Career' : 'Practice'; }
-function goOverhead() {
-  for (const id of ['menu', 'stablePanel', 'tackPanel', 'boardPanel', 'officePanel', 'results']) $(id).classList.add('hidden');
-  if (hub.state === 'riding' || running) { running = false; paused = true; setHudVisible(false); st.mode = ''; reattachRider(); rideOverride = null; rideEvent = null; }
-  moveCam(HUB_OVER, 'overhead', () => showHubChrome(true), 1.3);
-}
-function diveTo(id) {
-  const L = LOCS[id]; hub.loc = id; showHubChrome(false);
-  moveCam(L.dive, 'inside', () => { renderPanels(); if (L.panel === 'menu') renderMenu(); $(L.panel).classList.remove('hidden'); }, 1.15);
-}
-const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-canvas.addEventListener('pointerdown', e => {
-  if (hub.state !== 'overhead') return;
-  ndc.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
-  ray.setFromCamera(ndc, camera);
-  const hit = ray.intersectObjects([...yard.labels, ...yard.glows], false)[0];
-  if (hit) diveTo(hit.object.userData.loc);
-});
-function hubCamera(dt) {
-  const t = performance.now() / 1000;
-  yard.glows.forEach(g => { g.visible = hub.state === 'overhead'; g.material.opacity = 0.08 + 0.1 * (0.5 + 0.5 * Math.sin(t * 2.4)); });
-  yard.labels.forEach((l, i) => { l.visible = hub.state === 'overhead'; l.position.y = LOCS[l.userData.loc].lab.y + Math.sin(t * 1.6 + i) * 0.25; });
-  if (hub.state === 'splash') {
-    hub.orbit += dt * 0.05;
-    camera.position.set(Math.cos(hub.orbit) * 52, 22 + Math.sin(hub.orbit * 1.7) * 3, -38 + Math.sin(hub.orbit) * 40);
-    camLook.set(0, 1, -36);
-  } else if (hub.state === 'moving') {
-    hub.t = Math.min(1, hub.t + dt / hub.dur); const e = hub.t < 0.5 ? 4 * hub.t ** 3 : 1 - (-2 * hub.t + 2) ** 3 / 2;
-    camera.position.lerpVectors(hub.from.pos, hub.to.pos, e); camLook.lerpVectors(hub.from.look, hub.to.look, e);
-    if (hub.t >= 1) { hub.state = hub.next; const a = hub.after; hub.after = null; a && a(); }
-  }
-  camera.lookAt(camLook);
-}
-function renderPanels() {
-  // kit
-  const kr = $('kitRows'); kr.innerHTML = ''; settings.kit = settings.kit || { jacket: 0, pad: 0, helmet: 0 };
-  for (const [key, def] of Object.entries(KIT)) {
-    const h = document.createElement('h2'); h.textContent = def.label; kr.appendChild(h);
-    const row = document.createElement('div'); row.className = 'swatches';
-    def.opts.forEach(([name, col], i) => { const b = document.createElement('button'); b.className = 'sw' + ((settings.kit[key] || 0) === i ? ' sel' : ''); b.title = name; b.setAttribute('aria-label', name); b.style.background = '#' + col.toString(16).padStart(6, '0'); b.onclick = () => { settings.kit[key] = i; saveSettings(); applyKit(); renderPanels(); }; row.appendChild(b); });
-    kr.appendChild(row);
-  }
-  // events
-  const EV = [
-    { name: 'Saturday Clear Round', info: '7 fences, 1.00 to 1.20 m. Your own assist settings.', ov: null },
-    { name: 'Five-Star Jump Position', info: 'Limited event. Jump position assist off: fold and sit back yourself.', ov: { seat: false } },
-    { name: 'No Hands Up', info: 'Limited event. Jump position and take-off timing assists off.', ov: { seat: false, takeoff: false } },
-    { name: 'Novice Qualifier', info: 'Needs Take-off timing lesson tier 3. Lessons are not built yet.', locked: true },
-  ];
-  const ev = $('events'); ev.innerHTML = '';
-  EV.forEach(e => {
-    const d = document.createElement('div'); d.className = 'ev' + (e.locked ? ' locked' : '');
-    d.innerHTML = `<b>${e.name}</b><span>${e.info}</span>`;
-    const b = document.createElement('button'); b.className = 'plain'; b.textContent = e.locked ? 'Locked' : 'Enter';
-    if (!e.locked) b.onclick = () => { rideOverride = e.ov; rideEvent = e.name; startRide(); };
-    d.appendChild(b); ev.appendChild(d);
-  });
-  // office
-  $('officeBody').innerHTML = hub.mode === 'career'
-    ? '<p class="sub">Balance: <b>£0</b></p><p class="hint">Stable jobs (mucking out, grooming, tack cleaning) will be taken on here, and their pay will fund lessons. Not built yet.</p>'
-    : '<p class="sub">Practice mode: everything is open and no money is needed.</p>';
-}
-document.querySelectorAll('.overlay.side .back').forEach(b => b.onclick = goOverhead);
-$('menageBack').onclick = goOverhead;
-$('hubHome').onclick = () => { showHubChrome(false); hub.state = 'splash'; $('splash').classList.remove('hidden'); };
+$('navBack').onclick = back;
+$('hubHome').onclick = () => { hub.state = 'splash'; chrome(); $('splash').classList.remove('hidden'); };
 for (const [id, mode] of [['careerBtn', 'career'], ['practiceBtn', 'practice']]) $(id).onclick = () => { initAudio(); hub.mode = mode; $('splash').classList.add('hidden'); goOverhead(); };
 
 // ---------------------------------------------------------------- HUD
@@ -1324,15 +1552,15 @@ $('pauseBtn').addEventListener('pointerdown', e => e.stopPropagation());
 $('pauseBtn').onclick = pauseGame;
 $('viewBtn').addEventListener('pointerdown', e => e.stopPropagation());
 $('viewBtn').onclick = () => { settings.view = settings.view === 'chase' ? 'rider' : 'chase'; saveSettings(); };
-function pauseGame() { paused = true; running = false; setHudVisible(false); $('menu').classList.remove('hidden'); $('resumeBtn').style.display = 'block'; $('rideBtn').textContent = 'Restart'; renderMenu(); }
-$('resumeBtn').onclick = () => { initAudio(); $('menu').classList.add('hidden'); $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride'; running = true; paused = false; last = performance.now(); setHudVisible(true); };
+function pauseGame() { paused = true; running = false; setHudVisible(false); $('menu').classList.remove('hidden'); $('resumeBtn').style.display = 'block'; $('rideBtn').textContent = 'Restart'; renderMenu(); chrome(); }
+$('resumeBtn').onclick = () => { initAudio(); $('menu').classList.add('hidden'); $('navBack').style.display = 'none'; $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride'; running = true; paused = false; last = performance.now(); setHudVisible(true); };
 document.addEventListener('visibilitychange', () => { if (document.hidden && running) pauseGame(); });
 
 async function startRide() {
   initAudio();
   if (settings.control === 'tilt' && !tilt.have && !tilt.asked) { $('rideBtn').textContent = 'Checking tilt…'; await enableTilt(); $('rideBtn').textContent = 'Ride'; }
-  for (const id of ['menu', 'stablePanel', 'tackPanel', 'boardPanel', 'officePanel', 'results']) $(id).classList.add('hidden');
-  $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride'; showHubChrome(false); hub.state = 'riding';
+  for (const id of ['menu', 'itemPanel', 'results']) $(id).classList.add('hidden');
+  $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride'; hub.state = 'riding'; chrome();
   if (HORSES[settings.horse] !== horseDef) swapHorse();
   resetRun(); running = true; paused = false;
   trackAt(0, tb); camPos.copy(tb.p).addScaledVector(tb.t, -8); camPos.y = 3.4; camLook.copy(tb.p);
@@ -1373,8 +1601,8 @@ function render(dt) {
   grassMat.uniforms.uTime.value += dt; sky.position.copy(camera.position);
   renderer.render(scene, camera);
 }
-resetRun(); st.mode = ''; renderMenu(); renderPanels(); applyKit(); setHudVisible(false); requestAnimationFrame(frame);
-window.__cr = { hub, diveTo, goOverhead, LOCS, st, settings, fences, track, startRide, onTap, step, setLevel: l => { setLevel(settings, l); }, timeAllowed, startS, finishS, get running() { return running; } };
+resetRun(); st.mode = ''; renderMenu(); applyKit(); setHudVisible(false); requestAnimationFrame(frame);
+window.__cr = { hub, goPlace, goItem, back, goOverhead, PLACES, picks: yard.picks, st, settings, fences, track, startRide, onTap, step, setLevel: l => { setLevel(settings, l); }, timeAllowed, startS, finishS, get running() { return running; } };
 </script>
 </body>
 </html>
