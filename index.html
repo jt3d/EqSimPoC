@@ -75,6 +75,8 @@
   .panel.splash { width:min(420px,100%); text-align:center; background:rgba(15,23,42,.62); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
   .panel.splash h1 { font-size:34px; letter-spacing:.02em; }
   button.primary.alt { background:#f8fafc; color:#0f172a; }
+  button.primary.soon { margin-top:10px; background:rgba(148,163,184,.22); color:rgba(248,250,252,.55); border:1px dashed rgba(248,250,252,.3); cursor:not-allowed; padding:10px; }
+  button.primary.soon small { display:block; font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
   .ph { display:flex; justify-content:space-between; align-items:center; gap:10px; }
   #hubHint { top:10px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,.6); padding:8px 14px; border-radius:12px; font-weight:600; display:none; white-space:nowrap; }
   #hubHome { position:fixed; z-index:5; top:8px; left:10px; display:none; }
@@ -123,6 +125,7 @@
     <p class="sub">An equestrian career game · prototype</p>
     <div class="rot">Turn your phone sideways for the best view.</div>
     <div class="two"><button id="careerBtn" class="primary">Career</button><button id="practiceBtn" class="primary alt">Practice</button></div>
+    <button id="myYardBtn" class="primary soon" disabled aria-disabled="true">My Yard<small>Coming soon</small></button>
   </div>
 </div>
 <div id="hubHint" class="hud"><span id="hubMode">Career</span> · Tap a place in the yard</div>
