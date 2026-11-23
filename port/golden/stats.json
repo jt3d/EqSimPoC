@@ -1,0 +1,3332 @@
+[
+ {
+  "horse": "schoolmaster",
+  "level": 0,
+  "bot": "none",
+  "seeds": 30,
+  "clear": 23,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 0.933,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   }
+  ]
+ },
+ {
+  "horse": "schoolmaster",
+  "level": 1,
+  "bot": "none",
+  "seeds": 30,
+  "clear": 0,
+  "falls": 30,
+  "refusalElims": 0,
+  "meanFaults": 0,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.125
+   },
+   {
+    "seed": 2,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13
+   },
+   {
+    "seed": 3,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.0833
+   },
+   {
+    "seed": 4,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.0083
+   },
+   {
+    "seed": 5,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.025
+   },
+   {
+    "seed": 6,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.2333
+   },
+   {
+    "seed": 7,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.325
+   },
+   {
+    "seed": 8,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.425
+   },
+   {
+    "seed": 9,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.575
+   },
+   {
+    "seed": 10,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.2833
+   },
+   {
+    "seed": 11,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.075
+   },
+   {
+    "seed": 12,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.425
+   },
+   {
+    "seed": 13,
+    "elim": "Fall",
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 13.0583
+   },
+   {
+    "seed": 14,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.125
+   },
+   {
+    "seed": 15,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.3
+   },
+   {
+    "seed": 16,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.0917
+   },
+   {
+    "seed": 17,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.0583
+   },
+   {
+    "seed": 18,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.2417
+   },
+   {
+    "seed": 19,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.2167
+   },
+   {
+    "seed": 20,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 12.9833
+   },
+   {
+    "seed": 21,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.1417
+   },
+   {
+    "seed": 22,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.0667
+   },
+   {
+    "seed": 23,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.45
+   },
+   {
+    "seed": 24,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.4833
+   },
+   {
+    "seed": 25,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.125
+   },
+   {
+    "seed": 26,
+    "elim": "Fall",
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 13.1833
+   },
+   {
+    "seed": 27,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.3583
+   },
+   {
+    "seed": 28,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.275
+   },
+   {
+    "seed": 29,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.4083
+   },
+   {
+    "seed": 30,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 13.075
+   }
+  ]
+ },
+ {
+  "horse": "schoolmaster",
+  "level": 3,
+  "bot": "perfect",
+  "seeds": 30,
+  "clear": 23,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 0.933,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9667
+   }
+  ]
+ },
+ {
+  "horse": "schoolmaster",
+  "level": 5,
+  "bot": "perfect",
+  "seeds": 30,
+  "clear": 21,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 1.333,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 8,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   }
+  ]
+ },
+ {
+  "horse": "schoolmaster",
+  "level": 5,
+  "bot": "human",
+  "seeds": 30,
+  "clear": 21,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 1.333,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 8,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.975
+   }
+  ]
+ },
+ {
+  "horse": "youngster",
+  "level": 0,
+  "bot": "none",
+  "seeds": 30,
+  "clear": 24,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 0.8,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   }
+  ]
+ },
+ {
+  "horse": "youngster",
+  "level": 1,
+  "bot": "none",
+  "seeds": 30,
+  "clear": 0,
+  "falls": 30,
+  "refusalElims": 0,
+  "meanFaults": 0,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 2,
+    "elim": "Fall",
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 3,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 4,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 5,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 6,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 7,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 8,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 9,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 10,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 11,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 12,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 13,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 14,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 15,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 16,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 17,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 18,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 19,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 20,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 21,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 9.6083
+   },
+   {
+    "seed": 22,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 23,
+    "elim": "Fall",
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 24,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 25,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 26,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 27,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.0583
+   },
+   {
+    "seed": 28,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 9.7083
+   },
+   {
+    "seed": 29,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   },
+   {
+    "seed": 30,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.9917
+   }
+  ]
+ },
+ {
+  "horse": "youngster",
+  "level": 3,
+  "bot": "perfect",
+  "seeds": 30,
+  "clear": 24,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 0.8,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5917
+   }
+  ]
+ },
+ {
+  "horse": "youngster",
+  "level": 5,
+  "bot": "perfect",
+  "seeds": 30,
+  "clear": 20,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 1.467,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 8,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   }
+  ]
+ },
+ {
+  "horse": "youngster",
+  "level": 5,
+  "bot": "human",
+  "seeds": 30,
+  "clear": 18,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 1.733,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 8,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.5833
+   }
+  ]
+ },
+ {
+  "horse": "mare",
+  "level": 0,
+  "bot": "none",
+  "seeds": 30,
+  "clear": 24,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 0.8,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   }
+  ]
+ },
+ {
+  "horse": "mare",
+  "level": 1,
+  "bot": "none",
+  "seeds": 30,
+  "clear": 0,
+  "falls": 30,
+  "refusalElims": 0,
+  "meanFaults": 0,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 2,
+    "elim": "Fall",
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 3,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 4,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 5,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 6,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 7,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 8,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 9,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 10,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 11,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 12,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 13,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 14,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 15,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 16,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 17,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 18,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 19,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 20,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 21,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 22,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 23,
+    "elim": "Fall",
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 24,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 25,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 26,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 27,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 10.275
+   },
+   {
+    "seed": 28,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 29,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   },
+   {
+    "seed": 30,
+    "elim": "Fall",
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 11.6333
+   }
+  ]
+ },
+ {
+  "horse": "mare",
+  "level": 3,
+  "bot": "perfect",
+  "seeds": 30,
+  "clear": 24,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 0.8,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 36.9
+   }
+  ]
+ },
+ {
+  "horse": "mare",
+  "level": 5,
+  "bot": "perfect",
+  "seeds": 30,
+  "clear": 20,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 1.333,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   }
+  ]
+ },
+ {
+  "horse": "mare",
+  "level": 5,
+  "bot": "human",
+  "seeds": 30,
+  "clear": 19,
+  "falls": 0,
+  "refusalElims": 0,
+  "meanFaults": 1.6,
+  "runs": [
+   {
+    "seed": 1,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 2,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 3,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 4,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 5,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 6,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 7,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 8,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 9,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 10,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 11,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 12,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 13,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 14,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 15,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 16,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 17,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 18,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 19,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 20,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 21,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 22,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 23,
+    "elim": null,
+    "faults": 8,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 24,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 25,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 26,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 27,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 28,
+    "elim": null,
+    "faults": 0,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 29,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   },
+   {
+    "seed": 30,
+    "elim": null,
+    "faults": 4,
+    "timeFaults": 0,
+    "time": 37.6
+   }
+  ]
+ }
+]

@@ -212,6 +212,8 @@ const SPEED_MPM = 325;                  // time allowed is set at 325 m/min
 const TILT_DEG = 18;                    // full lean = 18 degrees of phone tilt
 const LEAN_REF = 30 * DEG;              // full lean on the gauge = 30 degrees of body lean
 const ZONE = 0.45;                      // ideal take-off zone, +/- metres
+// Simulation randomness goes through rng() so tests and parity traces can seed it. Visual-only randomness uses Math.random.
+let rng = Math.random;
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const dz = (x, d) => Math.abs(x) < d ? 0 : (x - Math.sign(x) * d) / (1 - d);
 
@@ -650,7 +652,7 @@ function resetRun() {
     conf: 1, faults: 0, refusals: 0, time: 0, timing: false, finished: false, endT: 0,
     req: false, leadReq: null, jump: null, landT: 0, refuse: null,
     cause: null, lat: 0, fore: 0, latAct: 0, foreAct: 0, latDem: 0, foreDem: 0.15, tolL: 0.22, tolF: 0.65, foreFree: false, S: 0, stage: 0,
-    wob: { t: 0, p1: Math.random() * 6, p2: Math.random() * 6, burst: 0 }, spook: null,
+    wob: { t: 0, p1: rng() * 6, p2: rng() * 6, burst: 0 }, spook: null,
     log: [], fall: null, elim: null, rec: [], recT: 0, flags: {}, v: L_WORK * STRIDE_HZ, kLook: 0,
   });
   fences.forEach(f => { f.done = false; f.topRails.forEach(r => { r.mesh.position.copy(r.base); r.mesh.rotation.set(0, 0, 0); r.falling = false; r.vy = 0; r.vz = 0; }); });
@@ -746,7 +748,7 @@ function rideStep(dt, A) {
   if (p0 < 0.44 && st.phase >= 0.44) { hoof(true); buzz(14); }
   if (st.disunited > 0) st.disunited -= dt;
   if (st.landT > 0) st.landT -= dt;
-  if (horseDef.spook > 0 && !st.spook && Math.random() < horseDef.spook * dt) { st.spook = { t: 0.6, dir: Math.random() < 0.5 ? -1 : 1 }; toast('Spook!', 'warn'); }
+  if (horseDef.spook > 0 && !st.spook && rng() < horseDef.spook * dt) { st.spook = { t: 0.6, dir: rng() < 0.5 ? -1 : 1 }; toast('Spook!', 'warn'); }
   if (st.phase >= 1) { st.phase -= 1; hoof(false); onStrideEnd(A); }
 }
 
@@ -767,14 +769,14 @@ function onStrideEnd(A) {
     st.req = false;
     if (dNow > 4.0) { toast('Too early: he ignored the aid', 'warn'); }
     else if (dNow > 0.5) {
-      if (st.conf < 0.35 && Math.random() < 0.5) return refuse(f, 'he had lost his confidence');
+      if (st.conf < 0.35 && rng() < 0.5) return refuse(f, 'he had lost his confidence');
       return takeOff(f, dNow, 'asked');
     }
   }
   if (dNext < 0.9) {
     if (dNow > 2.6) { st.chipLen = clamp(dNow - 1.15, 2.3, 3.3); st.flags.chip = true; return; }
     const go = clamp(horseDef.bold * st.conf + horseDef.forgive - (dNow < 1.1 ? 0.5 : 0), 0, 1);
-    if (Math.random() < go) return takeOff(f, dNow, 'self');
+    if (rng() < go) return takeOff(f, dNow, 'self');
     return refuse(f, dNow < 1.1 ? 'too deep to jump' : 'no aid to take off');
   }
 }
@@ -815,7 +817,7 @@ function jumpStep(dt, A) {
   }
   if (!j.rolled && st.s >= f.s) {
     j.rolled = true;
-    if (Math.random() < clamp(j.p, 0.01, 0.95)) {
+    if (rng() < clamp(j.p, 0.01, 0.95)) {
       j.knocked = true; st.faults += 4;
       const back = f.type === 'oxer' && (j.spotErr > 0 || j.lb);
       const rail = f.topRails[back ? f.topRails.length - 1 : 0];
@@ -1637,7 +1639,7 @@ function render(dt) {
   renderer.render(scene, camera);
 }
 resetRun(); st.mode = ''; renderMenu(); applyKit(); setHudVisible(false); requestAnimationFrame(frame);
-window.__cr = { hub, goPlace, goItem, back, goOverhead, PLACES, picks: yard.picks, st, settings, fences, track, startRide, onTap, step, setLevel: l => { setLevel(settings, l); }, timeAllowed, startS, finishS, get running() { return running; } };
+window.__cr = { curAssists, setRng: f => { rng = f || Math.random; }, track, HORSES, FENCE_DEFS, COURSE_PTS, constants: { G, STRIDE_HZ, L_MIN, L_WORK, L_MAX, SPEED_MPM, TILT_DEG, LEAN_REF, ZONE }, hub, goPlace, goItem, back, goOverhead, PLACES, picks: yard.picks, st, settings, fences, track, startRide, onTap, step, setLevel: l => { setLevel(settings, l); }, timeAllowed, startS, finishS, get running() { return running; } };
 </script>
 </body>
 </html>
