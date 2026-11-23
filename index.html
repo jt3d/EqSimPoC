@@ -69,6 +69,21 @@
   .stats b { color:var(--ink); }
   .tip { margin-top:12px; padding:10px 12px; border-radius:10px; background:rgba(34,197,94,.12); }
   .two { display:flex; gap:10px; } .two button { flex:1; }
+  .overlay.side { justify-content:flex-end; background:linear-gradient(90deg, transparent 35%, rgba(2,6,23,.45)); padding:10px; }
+  .overlay.side .panel { width:min(440px,100%); }
+  .overlay.center { align-items:center; background:rgba(2,6,23,.18); }
+  .panel.splash { width:min(420px,100%); text-align:center; background:rgba(15,23,42,.62); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+  .panel.splash h1 { font-size:34px; letter-spacing:.02em; }
+  button.primary.alt { background:#f8fafc; color:#0f172a; }
+  .ph { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #hubHint { top:10px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,.6); padding:8px 14px; border-radius:12px; font-weight:600; display:none; white-space:nowrap; }
+  #hubHome { position:fixed; z-index:5; top:8px; left:10px; display:none; }
+  .swatches { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 4px; }
+  .sw { width:44px; height:44px; border-radius:50%; border:3px solid rgba(255,255,255,.25); }
+  .sw.sel { border-color:#fff; box-shadow:0 0 0 3px var(--accent); }
+  .ev { padding:12px; border-radius:12px; background:rgba(255,255,255,.05); margin-top:10px; }
+  .ev b { display:block; font-size:16px; } .ev span { color:var(--muted); font-size:13px; display:block; margin:2px 0 8px; }
+  .ev.locked { opacity:.55; }
   .sticky { position:sticky; bottom:-22px; padding:4px 0 14px; background:linear-gradient(transparent, var(--panel) 30%); }
   .sticky button.primary { margin-top:10px; }
 </style>
@@ -97,14 +112,41 @@
 <button id="btnCollect" class="pace-btn">Steady</button>
 <button id="btnExtend" class="pace-btn">Push</button>
 
-<div id="menu" class="overlay">
-  <div class="panel">
+<div id="splash" class="overlay center">
+  <div class="panel splash">
     <h1>Clear Round</h1>
-    <p class="sub">Showjumping fun test. Tilt to balance, tap to ask. Seven fences, one clock.</p>
+    <p class="sub">An equestrian career game · prototype</p>
     <div class="rot">Turn your phone sideways for the best view.</div>
+    <div class="two"><button id="careerBtn" class="primary">Career</button><button id="practiceBtn" class="primary alt">Practice</button></div>
+  </div>
+</div>
+<div id="hubHint" class="hud"><span id="hubMode">Career</span> · Tap a place in the yard</div>
+<button id="hubHome" class="btn-hud">⌂</button>
 
-    <h2>Horse</h2>
-    <div id="horses" class="cards"></div>
+<div id="stablePanel" class="overlay side hidden"><div class="panel">
+  <div class="ph"><h1>Stable block</h1><button class="plain back">Back</button></div>
+  <p class="sub">Choose who you ride today.</p>
+  <div id="horses" class="cards"></div>
+</div></div>
+<div id="tackPanel" class="overlay side hidden"><div class="panel">
+  <div class="ph"><h1>Tack room</h1><button class="plain back">Back</button></div>
+  <p class="sub">Your colours. Kit with real effects (saddles, neck straps, air vests) will live here too.</p>
+  <div id="kitRows"></div>
+</div></div>
+<div id="boardPanel" class="overlay side hidden"><div class="panel">
+  <div class="ph"><h1>Notice board</h1><button class="plain back">Back</button></div>
+  <p class="sub">Competitions and limited events. Limited events force some assists off for that ride.</p>
+  <div id="events"></div>
+</div></div>
+<div id="officePanel" class="overlay side hidden"><div class="panel">
+  <div class="ph"><h1>Yard office</h1><button class="plain back">Back</button></div>
+  <div id="officeBody"></div>
+</div></div>
+
+<div id="menu" class="overlay side hidden">
+  <div class="panel">
+    <div class="ph"><h1>Menage</h1><button id="menageBack" class="plain">Back to yard</button></div>
+    <p class="sub">Free practice on the showjumping course. Lessons will be taught here too.</p>
 
     <h2>Controls</h2>
     <div class="seg" id="ctlSeg"><button data-v="tilt">Tilt</button><button data-v="pad">Thumb pad</button></div>
@@ -159,7 +201,7 @@
     <div id="resStats" class="stats"></div>
     <table><thead><tr><th>Fence</th><th>Result</th><th>Spot</th><th>What happened</th></tr></thead><tbody id="resRows"></tbody></table>
     <div id="resTip" class="tip"></div>
-    <div class="two"><button id="againBtn" class="primary">Ride again</button><button id="menuBtn" class="primary" style="background:#334155;color:#f8fafc">Settings</button></div>
+    <div class="two"><button id="againBtn" class="primary">Ride again</button><button id="menuBtn" class="primary" style="background:#334155;color:#f8fafc">Back to yard</button></div>
   </div>
 </div>
 
@@ -203,6 +245,8 @@ const ASSIST_LABEL = { balance: 'Side-to-side balance', seat: 'Jump position (fo
 const LEVEL_NAMES = ['0 · Passenger: everything assisted', '1 · You balance side to side', '2 · You also ride the jump position', '3 · You also time the take-off', '4 · You also control the pace', '5 · Full sim: you also change leads'];
 
 // ---------------------------------------------------------------- settings
+let rideOverride = null, rideEvent = null;
+const curAssists = () => (rideOverride ? { ...settings.assists, ...rideOverride } : settings.assists);
 function setLevel(s, l) { s.realism = l; s.assists = {}; ORDER.forEach((k, i) => s.assists[k] = i >= l); }
 function loadSettings() {
   const d = { control: 'tilt', pace: 'seat', realism: 2, assists: null, guides: true, sound: true, haptics: true, invLat: false, invFore: false, view: 'chase', horse: 'schoolmaster' };
@@ -304,7 +348,7 @@ function addOutline(root, colour = 0x2a1c12) {
   const blob = new THREE.SphereGeometry(1, 18, 12);
   for (let i = 0; i < 60; i++) {
     const a = rnd() * Math.PI * 2, r = 58 + rnd() * 70, x = Math.cos(a) * r * 1.25, z = Math.sin(a) * r;
-    if (Math.abs(x) < 20 && z < -28 && z > -50) continue;
+    if (Math.abs(x) < 42 && z < -24 && z > -68) continue;
     const sc = 0.8 + rnd() * 0.9, tr = new THREE.Group();
     const t = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.42, 4, 7), trunk); t.position.y = 2; tr.add(t);
     const leaf = leaves[Math.floor(rnd() * leaves.length)];
@@ -377,7 +421,7 @@ void main(){
     // denser near the arena fence, thinning outwards
     const x = (r3() - 0.5) * 2 * 95 * Math.pow(r3(), 0.35), z = (r3() - 0.5) * 2 * 75 * Math.pow(r3(), 0.35);
     if (Math.abs(x) < 38.6 && Math.abs(z) < 26.1) continue;
-    if (Math.abs(x) < 16.5 && z < -32.5 && z > -43.5) continue;
+    if (Math.abs(x) < 36 && z < -26 && z > -60) continue;
     e.set((r3() - 0.5) * 0.3, r3() * Math.PI, (r3() - 0.5) * 0.3); q.setFromEuler(e);
     const h = 0.35 + r3() * 0.55; pos.set(x, 0, z); scl.set(0.07 + r3() * 0.05, h, 1);
     m4.compose(pos, q, scl); grass.setMatrixAt(n++, m4);
@@ -439,6 +483,7 @@ for (let i = 0; i < 6; i++) { const m = new THREE.Mesh(ringGeo, new THREE.MeshBa
 function makeHorse(colour, ghost) {
   const m = ghost ? new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.3, depthWrite: false }) : lam(colour);
   const dark = ghost ? m : lam(0x1c1917);
+  let padMat = null;
   const root = new THREE.Group(), body = new THREE.Group(); body.position.y = 1.25; root.add(body);
   const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.36, 1.05, 6, 12), m); torso.rotation.x = Math.PI / 2; body.add(torso);
   const neckPivot = new THREE.Group(); neckPivot.position.set(0, 0.15, 0.62); body.add(neckPivot);
@@ -449,7 +494,7 @@ function makeHorse(colour, ghost) {
   const tail = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.8, 6), dark); tail.position.set(0, -0.15, -0.95); tail.rotation.x = -2.6; body.add(tail);
   if (!ghost) {
     const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.55), lam(0x3b2414)); saddle.position.set(0, 0.36, -0.02); body.add(saddle);
-    const pad = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.02, 0.6), lam(0x1e3a8a)); pad.position.set(0, 0.32, -0.02); body.add(pad);
+    padMat = lam(0x1e3a8a); const pad = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.02, 0.6), padMat); pad.position.set(0, 0.32, -0.02); body.add(pad);
   }
   const legs = {};
   const defs = { LF: [0.19, 0.55, true], RF: [-0.19, 0.55, true], LH: [0.19, -0.58, false], RH: [-0.19, -0.58, false] };
@@ -464,7 +509,7 @@ function makeHorse(colour, ghost) {
   const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.9, 20), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: ghost ? 0.08 : 0.22, depthWrite: false }));
   shadow.rotation.x = -Math.PI / 2; shadow.scale.set(0.6, 1.4, 1); shadow.position.y = 0.025; root.add(shadow);
   if (!ghost) { shadow.userData.noOutline = true; addOutline(root); }
-  return { root, body, neckPivot, legs, shadow };
+  return { root, body, neckPivot, legs, shadow, padMat };
 }
 function makeRider() {
   const jacket = lam(0x1e3a5f), breeches = lam(0xf5f5f4), boots = lam(0x111111), skin = lam(0xe0b18f), helmet = lam(0x0f172a);
@@ -480,7 +525,7 @@ function makeRider() {
   const hat = new THREE.Mesh(new THREE.SphereGeometry(0.125, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), helmet); hat.position.y = 0.74; torsoPivot.add(hat);
   for (const sx of [-1, 1]) { const arm = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.09, 0.5), jacket); arm.position.set(sx * 0.2, 0.42, 0.2); arm.rotation.x = 0.7; torsoPivot.add(arm); }
   addOutline(root, 0x1a1a24);
-  return { root, hips, torsoPivot, head };
+  return { root, hips, torsoPivot, head, mats: { jacket, helmet } };
 }
 
 let horseDef = HORSES[settings.horse];
@@ -490,7 +535,18 @@ horse.body.add(rider.root); scene.add(horse.root);
 const ghost = makeHorse(0xffffff, true); ghost.root.visible = false; scene.add(ghost.root);
 function swapHorse() {
   scene.remove(horse.root); horseDef = HORSES[settings.horse];
-  horse = makeHorse(horseDef.colour, false); scene.add(horse.root); reattachRider();
+  horse = makeHorse(horseDef.colour, false); scene.add(horse.root); reattachRider(); applyKit();
+}
+const KIT = {
+  jacket: { label: 'Jacket', opts: [['Navy', 0x1e3a5f], ['Bottle green', 0x1f4d3a], ['Burgundy', 0x6b1f2e], ['Black', 0x1c1c22], ['Tweed', 0x7a5c3e]] },
+  pad: { label: 'Saddle pad', opts: [['Navy', 0x1e3a8a], ['White', 0xf5f5f4], ['Red', 0xb91c1c], ['Purple', 0x6d28d9], ['Teal', 0x0f766e]] },
+  helmet: { label: 'Helmet', opts: [['Black', 0x0f172a], ['Navy', 0x1e3a8a], ['Silver', 0x9ca3af], ['Rose gold', 0xc08a7a]] },
+};
+function applyKit() {
+  const k = settings.kit || {};
+  rider.mats.jacket.color.setHex(KIT.jacket.opts[k.jacket || 0][1]);
+  rider.mats.helmet.color.setHex(KIT.helmet.opts[k.helmet || 0][1]);
+  if (horse.padMat) horse.padMat.color.setHex(KIT.pad.opts[k.pad || 0][1]);
 }
 function reattachRider() { horse.body.add(rider.root); rider.root.position.set(0, 0.42, -0.06); rider.root.rotation.set(0, 0, 0); }
 
@@ -621,10 +677,10 @@ function onTap() {
   if (st.mode !== 'ride') return;
   const f = nextFence();
   if (f && f.front - st.s < 8.5) {
-    if (!settings.assists.takeoff) st.req = true;
+    if (!curAssists().takeoff) st.req = true;
     return;
   }
-  if (!settings.assists.leads) {
+  if (!curAssists().leads) {
     const inWindow = st.phase >= 0.6 && st.phase <= 0.98;
     st.leadReq = inWindow ? 'clean' : 'late';
   }
@@ -655,7 +711,7 @@ function paceAssistTarget() {
 
 function step(dt) {
   readInput(dt);
-  const A = settings.assists;
+  const A = curAssists();
   if (st.mode === 'ride') rideStep(dt, A);
   else if (st.mode === 'jump') jumpStep(dt, A);
   else if (st.mode === 'refuse') refuseStep(dt);
@@ -730,7 +786,7 @@ function onStrideEnd(A) {
 }
 
 function takeOff(f, d, how) {
-  const A = settings.assists, hd = horseDef;
+  const A = curAssists(), hd = horseDef;
   const spotErr = d - f.ideal, notes = [];
   let p = 0.025 + 0.16 * Math.pow(Math.max(0, Math.abs(spotErr) / ZONE - 1), 1.2);
   if (f.type === 'vertical' && st.L > 4.0) { p += 0.1; notes.push('too flat and fast for a vertical'); }
@@ -923,10 +979,7 @@ function poseRider() {
 const camPos = new THREE.Vector3(-45, 8, 22), camLook = new THREE.Vector3(), tmpV = new THREE.Vector3(), tmpL = new THREE.Vector3();
 let menuOrbit = 0;
 function updateCamera(dt) {
-  if (!running) {
-    menuOrbit += dt * 0.06;
-    camera.position.set(Math.cos(menuOrbit) * 48, 18, Math.sin(menuOrbit) * 34); camera.lookAt(0, 0, 0); return;
-  }
+  if (!running && hub.state !== 'riding') { hubCamera(dt); return; }
   trackAt(st.s, tb);
   const hp = horse.root.position;
   const fp = settings.view === 'rider' && st.mode !== 'fallen';
@@ -959,8 +1012,170 @@ function updateGuides() {
   }
 }
 
-// ---------------------------------------------------------------- HUD
+// ---------------------------------------------------------------- stable yard hub
 const $ = id => document.getElementById(id);
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+const yard = { people: [], heads: [], nets: [], led: null, glows: [], labels: [] };
+function makePerson(col) {
+  const g = new THREE.Group(), body = lam(col), skin = lam(0xe0b18f), legsM = lam(0x3f3a36);
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.55, 4, 10), body); torso.position.y = 1.2; g.add(torso);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 10), skin); head.position.y = 1.75; g.add(head);
+  const legs = [-1, 1].map(sx => { const piv = new THREE.Group(); piv.position.set(sx * 0.1, 0.85, 0); const l = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.8, 0.12), legsM); l.position.y = -0.4; piv.add(l); g.add(piv); return piv; });
+  addOutline(g, 0x2a1c12); scene.add(g); return { g, legs };
+}
+{
+  // gravel yard
+  const gravel = canvasTex(128, 128, (x, w, h) => { x.fillStyle = '#cfc6b2'; x.fillRect(0, 0, w, h); for (let i = 0; i < 1400; i++) { x.fillStyle = Math.random() < 0.5 ? 'rgba(120,110,95,.25)' : 'rgba(255,250,235,.3)'; x.fillRect(Math.random() * w, Math.random() * h, 2, 2); } });
+  gravel.wrapS = gravel.wrapT = THREE.RepeatWrapping; gravel.repeat.set(14, 6);
+  const yp = new THREE.Mesh(new THREE.PlaneGeometry(72, 32), lam(0xffffff, { map: gravel })); yp.rotation.x = -Math.PI / 2; yp.position.set(0, 0.012, -43); scene.add(yp);
+  // stable fronts on the barn (barn front face at z = -33.5)
+  const doorMat = lam(0x4a3426), darkMat = lam(0x1a120c), coats = [0x7a5230, 0x2a2a2e, 0xa8643a, 0xd8cdb8, 0x5a3a22, 0x8c8c8c];
+  for (let i = 0; i < 6; i++) {
+    const x = -12.5 + i * 5;
+    const lower = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.3, 0.15), doorMat); lower.position.set(x, 0.65, -33.42); scene.add(lower);
+    const gap = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.2, 0.05), darkMat); gap.position.set(x, 1.9, -33.47); scene.add(gap);
+    const hg = new THREE.Group(), cm = lam(coats[i]);
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.22, 0.8, 8), cm); neck.rotation.x = 1.0; neck.position.set(0, 0, 0.25); hg.add(neck);
+    const hd = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.24, 0.58), cm); hd.position.set(0, -0.12, 0.72); hd.rotation.x = 0.7; hg.add(hd);
+    hg.position.set(x, 1.85, -33.6); addOutline(hg); scene.add(hg); yard.heads.push({ hg, ph: i * 1.7 });
+    if (i < 5) { const net = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 8), lam(0xd9b45a)); net.scale.y = 1.4; const piv = new THREE.Group(); piv.position.set(x + 2.5, 2.6, -33.2); net.position.y = -0.55; piv.add(net); scene.add(piv); yard.nets.push({ piv, ph: i }); }
+  }
+  // tack room and yard office
+  const building = (x, z, wall, roofCol, sign) => {
+    const g = new THREE.Group();
+    const w = new THREE.Mesh(new THREE.BoxGeometry(8, 3.5, 6), lam(wall)); w.position.y = 1.75; g.add(w);
+    const r = new THREE.Mesh(new THREE.ConeGeometry(5.9, 2.2, 4), lam(roofCol)); r.rotation.y = Math.PI / 4; r.scale.set(1, 1, 0.78); r.position.y = 4.6; g.add(r);
+    const d = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.2, 0.1), doorMat); d.position.set(0, 1.1, 3.02); g.add(d);
+    const sg = board(2.6, 0.6, canvasTex(256, 60, (c, W, H) => { c.fillStyle = '#f8f1dc'; c.fillRect(0, 0, W, H); c.fillStyle = '#3b2a1a'; c.font = 'bold 34px Georgia, serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(sign, W / 2, H / 2 + 2); }));
+    sg.position.set(0, 2.85, 3.04); g.add(sg);
+    g.position.set(x, 0, z); scene.add(g); return g;
+  };
+  building(-25, -42, 0xefe3c8, 0x3f6b4f, 'Tack room');
+  building(25, -42, 0xe6d3ad, 0x8a3b2e, 'Yard office');
+  // notice board
+  const nbG = new THREE.Group();
+  for (const sx of [-1, 1]) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, 0.14), doorMat); p.position.set(sx * 1.2, 1.2, 0); nbG.add(p); }
+  const cork = board(2.4, 1.4, canvasTex(240, 140, (c, W, H) => { c.fillStyle = '#b5844f'; c.fillRect(0, 0, W, H); const cols = ['#fef9c3', '#dbeafe', '#fce7f3', '#dcfce7', '#ffffff']; for (let i = 0; i < 7; i++) { c.save(); c.translate(20 + (i % 4) * 56 + Math.random() * 8, 18 + Math.floor(i / 4) * 64 + Math.random() * 8); c.rotate((Math.random() - 0.5) * 0.2); c.fillStyle = cols[i % 5]; c.fillRect(0, 0, 44, 50); c.fillStyle = '#9ca3af'; for (let l = 0; l < 5; l++) c.fillRect(5, 9 + l * 8, 34 - (l % 2) * 10, 2); c.fillStyle = '#dc2626'; c.beginPath(); c.arc(22, 4, 3, 0, 7); c.fill(); c.restore(); } }));
+  cork.position.set(0, 1.75, 0.08); nbG.add(cork);
+  const roofB = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.12, 0.5), lam(0x3f6b4f)); roofB.position.set(0, 2.5, 0.05); nbG.add(roofB);
+  nbG.position.set(-34, 0, -30.5); scene.add(nbG);
+  // people and a horse being led
+  yard.people.push({ ...makePerson(0x2f6f9f), path: [V3(-19, 0, -30.2), V3(17, 0, -30.2)], sp: 1.2, u: 0.1 });
+  yard.people.push({ ...makePerson(0x9f4f3a), path: [V3(-25, 0, -39.6), V3(-8, 0, -31.5)], sp: 1.1, u: 0.5 });
+  yard.people.push({ ...makePerson(0x4f7f3a), path: [V3(25, 0, -39.6), V3(8, 0, -31.2)], sp: 1.0, u: 0.8 });
+  yard.people.push({ ...makePerson(0x6a4f8f), path: [V3(-33, 0, -32.5), V3(-28, 0, -38)], sp: 0.7, u: 0.3 });
+  const led = makeHorse(0xb07a48, false); scene.add(led.root);
+  yard.led = { H: led, groom: makePerson(0xc2410c), path: [V3(-30, 0, -27.6), V3(30, 0, -27.6)], sp: 1.6, u: 0.2 };
+}
+function walkAlong(o, dt) {
+  const [a, b] = o.path, len = a.distanceTo(b);
+  o.u += (o.sp * dt) / len; const k = o.u % 2, f = k < 1 ? k : 2 - k;
+  const pos = a.clone().lerp(b, f), dir = (k < 1 ? b.clone().sub(a) : a.clone().sub(b)).normalize();
+  return { pos, yaw: Math.atan2(dir.x, dir.z) };
+}
+function animateYard(dt) {
+  const t = performance.now() / 1000;
+  for (const p of yard.people) {
+    const { pos, yaw } = walkAlong(p, dt); p.g.position.copy(pos); p.g.position.y = Math.abs(Math.sin(t * 5 + p.u)) * 0.04; p.g.rotation.y = yaw;
+    p.legs[0].rotation.x = Math.sin(t * 5 + p.u * 3) * 0.5; p.legs[1].rotation.x = -p.legs[0].rotation.x;
+  }
+  const L = yard.led; if (L) {
+    const { pos, yaw } = walkAlong(L, dt);
+    L.H.root.position.copy(pos); L.H.root.rotation.y = yaw; L.H.body.position.y = 1.25 + Math.abs(Math.sin(t * 3.2)) * 0.03;
+    legPose(L.H.legs, (t * 0.9) % 1, null);
+    const fwd = V3(Math.sin(yaw), 0, Math.cos(yaw)), left = V3(fwd.z, 0, -fwd.x);
+    L.groom.g.position.copy(pos).addScaledVector(left, 0.9).addScaledVector(fwd, 0.8); L.groom.g.rotation.y = yaw;
+    L.groom.legs[0].rotation.x = Math.sin(t * 5) * 0.5; L.groom.legs[1].rotation.x = -L.groom.legs[0].rotation.x;
+  }
+  for (const h of yard.heads) { h.hg.rotation.x = Math.sin(t * 0.8 + h.ph) * 0.12; h.hg.rotation.y = Math.sin(t * 0.5 + h.ph * 2) * 0.35; }
+  for (const n of yard.nets) n.piv.rotation.z = Math.sin(t * 1.3 + n.ph) * 0.06;
+}
+
+// selectable places: soft pulsing glow, a floating label and a camera target to dive into
+const LOCS = {
+  menage: { label: 'Menage', box: [V3(0, 0.15, 0), V3(76, 0.3, 51)], lab: V3(0, 5, -10), dive: { pos: V3(-34, 10, 26), look: V3(0, 0, 0) }, panel: 'menu' },
+  stable: { label: 'Stable block', box: [V3(0, 2.6, -38), V3(30.8, 5.6, 9.8)], lab: V3(0, 8.5, -38), dive: { pos: V3(0, 3.4, -23.5), look: V3(0, 2, -34) }, panel: 'stablePanel' },
+  tack: { label: 'Tack room', box: [V3(-25, 2.2, -42), V3(8.8, 5, 6.8)], lab: V3(-25, 8, -42), dive: { pos: V3(-25, 3, -30), look: V3(-25, 2, -39) }, panel: 'tackPanel' },
+  board: { label: 'Notice board', box: [V3(-34, 1.3, -30.5), V3(3.2, 2.8, 0.8)], lab: V3(-34, 4.4, -30.5), dive: { pos: V3(-34, 1.9, -25.6), look: V3(-34, 1.7, -30.5) }, panel: 'boardPanel' },
+  office: { label: 'Yard office', box: [V3(25, 2.2, -42), V3(8.8, 5, 6.8)], lab: V3(25, 8, -42), dive: { pos: V3(25, 3, -30), look: V3(25, 2, -39) }, panel: 'officePanel' },
+};
+for (const [id, L] of Object.entries(LOCS)) {
+  const glow = new THREE.Mesh(new THREE.BoxGeometry(...L.box[1].toArray()), new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.15, depthWrite: false }));
+  glow.position.copy(L.box[0]); glow.userData.loc = id; glow.visible = false; scene.add(glow); yard.glows.push(glow);
+  const tag = new THREE.Sprite(new THREE.SpriteMaterial({ depthTest: false, map: canvasTex(320, 80, (c, W, H) => { c.fillStyle = 'rgba(15,23,42,.78)'; c.beginPath(); c.roundRect(4, 4, W - 8, H - 8, 30); c.fill(); c.strokeStyle = '#ffe08a'; c.lineWidth = 4; c.stroke(); c.fillStyle = '#fff'; c.font = 'bold 36px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.label, W / 2, H / 2 + 2); }) }));
+  tag.scale.set(8, 2, 1); tag.position.copy(L.lab); tag.visible = false; tag.renderOrder = 10; tag.userData.loc = id; scene.add(tag); yard.labels.push(tag);
+}
+const HUB_OVER = { pos: V3(0, 44, 4), look: V3(0, 0, -28) };
+const hub = { state: 'splash', t: 0, from: null, to: null, next: null, after: null, loc: null, mode: 'career', orbit: 0 };
+function moveCam(to, next, after, dur = 1.2) { hub.from = { pos: camera.position.clone(), look: camLook.clone() }; hub.to = to; hub.t = 0; hub.dur = dur; hub.state = 'moving'; hub.next = next; hub.after = after; }
+function showHubChrome(v) { $('hubHint').style.display = v ? 'block' : 'none'; $('hubHome').style.display = v ? 'block' : 'none'; $('hubMode').textContent = hub.mode === 'career' ? 'Career' : 'Practice'; }
+function goOverhead() {
+  for (const id of ['menu', 'stablePanel', 'tackPanel', 'boardPanel', 'officePanel', 'results']) $(id).classList.add('hidden');
+  if (hub.state === 'riding' || running) { running = false; paused = true; setHudVisible(false); st.mode = ''; reattachRider(); rideOverride = null; rideEvent = null; }
+  moveCam(HUB_OVER, 'overhead', () => showHubChrome(true), 1.3);
+}
+function diveTo(id) {
+  const L = LOCS[id]; hub.loc = id; showHubChrome(false);
+  moveCam(L.dive, 'inside', () => { renderPanels(); if (L.panel === 'menu') renderMenu(); $(L.panel).classList.remove('hidden'); }, 1.15);
+}
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+canvas.addEventListener('pointerdown', e => {
+  if (hub.state !== 'overhead') return;
+  ndc.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects([...yard.labels, ...yard.glows], false)[0];
+  if (hit) diveTo(hit.object.userData.loc);
+});
+function hubCamera(dt) {
+  const t = performance.now() / 1000;
+  yard.glows.forEach(g => { g.visible = hub.state === 'overhead'; g.material.opacity = 0.08 + 0.1 * (0.5 + 0.5 * Math.sin(t * 2.4)); });
+  yard.labels.forEach((l, i) => { l.visible = hub.state === 'overhead'; l.position.y = LOCS[l.userData.loc].lab.y + Math.sin(t * 1.6 + i) * 0.25; });
+  if (hub.state === 'splash') {
+    hub.orbit += dt * 0.05;
+    camera.position.set(Math.cos(hub.orbit) * 52, 22 + Math.sin(hub.orbit * 1.7) * 3, -38 + Math.sin(hub.orbit) * 40);
+    camLook.set(0, 1, -36);
+  } else if (hub.state === 'moving') {
+    hub.t = Math.min(1, hub.t + dt / hub.dur); const e = hub.t < 0.5 ? 4 * hub.t ** 3 : 1 - (-2 * hub.t + 2) ** 3 / 2;
+    camera.position.lerpVectors(hub.from.pos, hub.to.pos, e); camLook.lerpVectors(hub.from.look, hub.to.look, e);
+    if (hub.t >= 1) { hub.state = hub.next; const a = hub.after; hub.after = null; a && a(); }
+  }
+  camera.lookAt(camLook);
+}
+function renderPanels() {
+  // kit
+  const kr = $('kitRows'); kr.innerHTML = ''; settings.kit = settings.kit || { jacket: 0, pad: 0, helmet: 0 };
+  for (const [key, def] of Object.entries(KIT)) {
+    const h = document.createElement('h2'); h.textContent = def.label; kr.appendChild(h);
+    const row = document.createElement('div'); row.className = 'swatches';
+    def.opts.forEach(([name, col], i) => { const b = document.createElement('button'); b.className = 'sw' + ((settings.kit[key] || 0) === i ? ' sel' : ''); b.title = name; b.setAttribute('aria-label', name); b.style.background = '#' + col.toString(16).padStart(6, '0'); b.onclick = () => { settings.kit[key] = i; saveSettings(); applyKit(); renderPanels(); }; row.appendChild(b); });
+    kr.appendChild(row);
+  }
+  // events
+  const EV = [
+    { name: 'Saturday Clear Round', info: '7 fences, 1.00 to 1.20 m. Your own assist settings.', ov: null },
+    { name: 'Five-Star Jump Position', info: 'Limited event. Jump position assist off: fold and sit back yourself.', ov: { seat: false } },
+    { name: 'No Hands Up', info: 'Limited event. Jump position and take-off timing assists off.', ov: { seat: false, takeoff: false } },
+    { name: 'Novice Qualifier', info: 'Needs Take-off timing lesson tier 3. Lessons are not built yet.', locked: true },
+  ];
+  const ev = $('events'); ev.innerHTML = '';
+  EV.forEach(e => {
+    const d = document.createElement('div'); d.className = 'ev' + (e.locked ? ' locked' : '');
+    d.innerHTML = `<b>${e.name}</b><span>${e.info}</span>`;
+    const b = document.createElement('button'); b.className = 'plain'; b.textContent = e.locked ? 'Locked' : 'Enter';
+    if (!e.locked) b.onclick = () => { rideOverride = e.ov; rideEvent = e.name; startRide(); };
+    d.appendChild(b); ev.appendChild(d);
+  });
+  // office
+  $('officeBody').innerHTML = hub.mode === 'career'
+    ? '<p class="sub">Balance: <b>£0</b></p><p class="hint">Stable jobs (mucking out, grooming, tack cleaning) will be taken on here, and their pay will fund lessons. Not built yet.</p>'
+    : '<p class="sub">Practice mode: everything is open and no money is needed.</p>';
+}
+document.querySelectorAll('.overlay.side .back').forEach(b => b.onclick = goOverhead);
+$('menageBack').onclick = goOverhead;
+$('hubHome').onclick = () => { showHubChrome(false); hub.state = 'splash'; $('splash').classList.remove('hidden'); };
+for (const [id, mode] of [['careerBtn', 'career'], ['practiceBtn', 'practice']]) $(id).onclick = () => { initAudio(); hub.mode = mode; $('splash').classList.add('hidden'); goOverhead(); };
+
+// ---------------------------------------------------------------- HUD
 const balCv = $('balance'), balCx = balCv.getContext('2d'), beatCv = $('beat'), beatCx = beatCv.getContext('2d');
 let toastTimer = 0;
 function pron(t) { return horseDef && horseDef.she ? t.replace(/\bhe\b/g, 'she').replace(/\bHe\b/g, 'She').replace(/\bhim\b/g, 'her').replace(/\bhis\b/g, 'her') : t; }
@@ -990,7 +1205,7 @@ function drawBeat() {
   c.clearRect(0, 0, W, H);
   c.fillStyle = 'rgba(15,23,42,.55)'; c.beginPath(); c.roundRect(0, 0, W, H, 16); c.fill();
   const x0 = 18, x1 = W - 18, y = 44, w = x1 - x0;
-  c.fillStyle = settings.assists.leads ? 'rgba(148,163,184,.25)' : 'rgba(34,197,94,.45)'; c.fillRect(x0 + w * 0.6, y - 16, w * 0.38, 32);
+  c.fillStyle = curAssists().leads ? 'rgba(148,163,184,.25)' : 'rgba(34,197,94,.45)'; c.fillRect(x0 + w * 0.6, y - 16, w * 0.38, 32);
   c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 3; c.beginPath(); c.moveTo(x0, y); c.lineTo(x1, y); c.stroke();
   const ph = st.mode === 'ride' ? st.phase : 0;
   [0, 0.22, 0.44].forEach((b, i) => { const lit = ph >= b && ph < b + 0.12; c.fillStyle = lit ? '#fde047' : 'rgba(255,255,255,.7)'; c.beginPath(); c.arc(x0 + w * b + 8, y, lit ? 13 : (i === 2 ? 10 : 8), 0, Math.PI * 2); c.fill(); });
@@ -1018,7 +1233,7 @@ function updateHud(dt) {
 function setHudVisible(v) {
   for (const id of ['hudTop', 'gauges']) $(id).style.display = v ? '' : 'none';
   stickEl.style.display = v && ctl() === 'pad' ? 'block' : 'none';
-  const pb = v && settings.pace === 'buttons' && !settings.assists.pace;
+  const pb = v && settings.pace === 'buttons' && !curAssists().pace;
   $('btnCollect').style.display = pb ? 'block' : 'none'; $('btnExtend').style.display = pb ? 'block' : 'none';
   $('touch').style.display = v ? 'block' : 'none';
 }
@@ -1034,7 +1249,7 @@ function showResults() {
     const better = !best || total < best.total || (total === best.total && st.time < best.time);
     if (better) { saveBest({ total, time: +st.time.toFixed(2), rec: st.rec }); newBest = true; }
   }
-  $('resHead').textContent = st.elim ? `Eliminated: ${st.elim.toLowerCase()}` : total === 0 ? 'Clear round!' : `${total} fault${total === 1 ? '' : 's'}`;
+  $('resHead').textContent = (rideEvent ? rideEvent + ': ' : '') + (st.elim ? `Eliminated: ${st.elim.toLowerCase()}` : total === 0 ? 'Clear round!' : `${total} fault${total === 1 ? '' : 's'}`);
   $('resStats').innerHTML = `<span>Time <b>${st.time.toFixed(2)} s</b></span><span>Time allowed <b>${timeAllowed} s</b></span><span>Jumping faults <b>${st.faults}</b></span><span>Time faults <b>${tf}</b></span><span>Horse <b>${horseDef.name}</b></span><span>Realism <b>${isCustom() ? 'custom' : settings.realism + ' of 5'}</b></span>` +
     (newBest ? '<span><b style="color:#86efac">New personal best: your ghost will ride with you</b></span>' : best ? `<span>Best <b>${best.total} faults, ${best.time.toFixed(2)} s</b></span>` : '');
   $('resRows').innerHTML = st.log.map(e => `<tr><td>${e.n}</td><td class="r-${e.result === 'fall' ? 'down' : e.result}">${e.result}</td><td>${e.d != null ? e.spotWord + ', ' + e.d.toFixed(1) + ' m' : ''}</td><td>${pron(e.notes.join('; ')) || 'nicely ridden'}</td></tr>`).join('');
@@ -1102,9 +1317,9 @@ $('realism').oninput = e => { setLevel(settings, +e.target.value); saveSettings(
 for (const id of ['guides', 'sound', 'haptics', 'invLat', 'invFore']) $(id).onchange = e => { settings[id] = e.target.checked; saveSettings(); };
 $('enableTilt').onclick = enableTilt;
 $('setNeutral').onclick = () => { setNeutral(); $('tiltStatus').textContent = tilt.have ? 'Neutral set.' : 'Tap Enable tilt first.'; };
-$('rideBtn').onclick = startRide;
+$('rideBtn').onclick = () => { rideOverride = null; rideEvent = null; startRide(); };
 $('againBtn').onclick = startRide;
-$('menuBtn').onclick = () => { $('results').classList.add('hidden'); $('menu').classList.remove('hidden'); renderMenu(); };
+$('menuBtn').onclick = goOverhead;
 $('pauseBtn').addEventListener('pointerdown', e => e.stopPropagation());
 $('pauseBtn').onclick = pauseGame;
 $('viewBtn').addEventListener('pointerdown', e => e.stopPropagation());
@@ -1116,12 +1331,13 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && run
 async function startRide() {
   initAudio();
   if (settings.control === 'tilt' && !tilt.have && !tilt.asked) { $('rideBtn').textContent = 'Checking tilt…'; await enableTilt(); $('rideBtn').textContent = 'Ride'; }
-  $('menu').classList.add('hidden'); $('results').classList.add('hidden'); $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride';
+  for (const id of ['menu', 'stablePanel', 'tackPanel', 'boardPanel', 'officePanel', 'results']) $(id).classList.add('hidden');
+  $('resumeBtn').style.display = 'none'; $('rideBtn').textContent = 'Ride'; showHubChrome(false); hub.state = 'riding';
   if (HORSES[settings.horse] !== horseDef) swapHorse();
   resetRun(); running = true; paused = false;
   trackAt(0, tb); camPos.copy(tb.p).addScaledVector(tb.t, -8); camPos.y = 3.4; camLook.copy(tb.p);
   setHudVisible(true);
-  toast(settings.control === 'tilt' && !tilt.have ? 'No tilt sensor here: using the thumb pad' : `${horseDef.name}: ${fences.length} fences, ${timeAllowed} s allowed`, settings.control === 'tilt' && !tilt.have ? 'warn' : 'info');
+  toast(settings.control === 'tilt' && !tilt.have ? 'No tilt sensor here: using the thumb pad' : `${rideEvent ? rideEvent + ': ' : ''}${horseDef.name}, ${timeAllowed} s allowed`, settings.control === 'tilt' && !tilt.have ? 'warn' : 'info');
 }
 
 function drawTiltPreview() {
@@ -1140,6 +1356,7 @@ function frame(now) {
   render(dt);
 }
 function render(dt) {
+  animateYard(dt);
   if (!running && !st.mode) { st.v = 0; poseHorse(horse, 6, 0, 0, 0, null, true); }
   else {
     const j = st.jump;
@@ -1156,8 +1373,8 @@ function render(dt) {
   grassMat.uniforms.uTime.value += dt; sky.position.copy(camera.position);
   renderer.render(scene, camera);
 }
-resetRun(); st.mode = ''; renderMenu(); setHudVisible(false); requestAnimationFrame(frame);
-window.__cr = { st, settings, fences, track, startRide, onTap, step, setLevel: l => { setLevel(settings, l); }, timeAllowed, startS, finishS, get running() { return running; } };
+resetRun(); st.mode = ''; renderMenu(); renderPanels(); applyKit(); setHudVisible(false); requestAnimationFrame(frame);
+window.__cr = { hub, diveTo, goOverhead, LOCS, st, settings, fences, track, startRide, onTap, step, setLevel: l => { setLevel(settings, l); }, timeAllowed, startS, finishS, get running() { return running; } };
 </script>
 </body>
 </html>
